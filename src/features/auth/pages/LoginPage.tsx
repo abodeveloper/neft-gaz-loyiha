@@ -1,12 +1,11 @@
-import Image from "@/assets/right-logo.jpg";
-// import Image from "@/assets/ielts.webp";
-import Logo from "@/assets/logo.jpg";
+import Image from "@/assets/login-image.png";
+import Logo from "@/assets/logo.png";
 import { useAuthStore } from "@/store/auth-store";
 import { Navigate, useLocation } from "react-router-dom";
 import { LoginForm } from "../components/LoginForm";
 
 export default function LoginPage() {
-  const { isAuthenticated, user, loading } = useAuthStore();
+  const { isAuthenticated, loading } = useAuthStore();
   const location = useLocation();
 
   if (isAuthenticated && !loading) {
