@@ -48,6 +48,26 @@ export function useNewColumns(): ColumnDef<News>[] {
       cell: ({ row }) => <div>{row.getValue("title_en")}</div>,
     },
     {
+      accessorKey: "image",
+      header: t("Image"),
+      cell: ({ row }) => {
+        const imageUrl = row.getValue("image") as string;
+        return (
+          <div>
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt="News"
+                className="w-20 rounded-md object-cover"
+              />
+            ) : (
+              <div className="w-20 h-12 rounded-md bg-muted" />
+            )}
+          </div>
+        );
+      },
+    },
+    {
       accessorKey: "type",
       header: t("Type"),
       cell: ({ row }) => (
