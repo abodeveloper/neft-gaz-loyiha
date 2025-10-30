@@ -16,6 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 import { get } from "lodash";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { getNewsData } from "./api/news";
 import { useNewColumns } from "./hooks/useNewColumns";
@@ -27,6 +28,7 @@ interface FilterForm {
 }
 
 export default function NewsPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
@@ -63,8 +65,8 @@ export default function NewsPage() {
   if (isError)
     return (
       <ErrorMessage
-        title="Failed to Load page"
-        message="An error occurred while loading the page. Please try again later."
+        title={t("Failed to load page")}
+        message={t("An error occurred. Please try again later.")}
       />
     );
 
@@ -86,10 +88,10 @@ export default function NewsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-2">
-        <div className="text-xl font-semibold">News & Announcement</div>
+        <div className="text-xl font-semibold">{t("News & Announcements")}</div>
         <div className="flex gap-2">
           <Input
-            placeholder="Search ..."
+            placeholder={t("Search ...")}
             value={searchInput}
             onChange={(event) => setSearchInput(event.target.value)}
             className="max-w-sm w-64"
@@ -97,9 +99,9 @@ export default function NewsPage() {
           <Button
             variant="default"
             onClick={() => navigate(`create`)}
-            title="Create"
+            title={t("Create")}
           >
-            <RiAddLine className="h-5 w-5" /> Create
+            <RiAddLine className="h-5 w-5" /> {t("Create")}
           </Button>
         </div>
       </div>
@@ -112,13 +114,13 @@ export default function NewsPage() {
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Filter by Type" />
+                    <SelectValue placeholder={t("Filter by Type")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
-                    <SelectItem value={NewsType.NEWS}>News</SelectItem>
+                    <SelectItem value="all">{t("All")}</SelectItem>
+                    <SelectItem value={NewsType.NEWS}>{t("News")}</SelectItem>
                     <SelectItem value={NewsType.ANNOUNCEMENT}>
-                      Announcement
+                      {t("Announcement")}
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -133,19 +135,19 @@ export default function NewsPage() {
                   value={field.value ? "true" : "false"} // Booleanni stringga aylantirish
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Filter by status" />
+                    <SelectValue placeholder={t("Filter by status")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="true">Active</SelectItem>
-                    <SelectItem value="false">Inactive</SelectItem>
+                    <SelectItem value="true">{t("Active")}</SelectItem>
+                    <SelectItem value="false">{t("Inactive")}</SelectItem>
                   </SelectContent>
                 </Select>
               )}
             />
             <div className="flex gap-2">
-              <Button type="submit">Filter</Button>
+              <Button type="submit">{t("Filter")}</Button>
               <Button type="button" variant="outline" onClick={handleReset}>
-                Reset
+                {t("Reset")}
               </Button>
             </div>
           </div>

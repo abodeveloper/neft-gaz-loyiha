@@ -1,17 +1,11 @@
-import {
-  IconDotsVertical,
-  IconLogout,
-  IconUserCircle,
-} from "@tabler/icons-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
@@ -21,9 +15,16 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuthStore } from "@/store/auth-store";
 import { RiUserSmileFill } from "@remixicon/react";
+import {
+  IconDotsVertical,
+  IconLogout
+} from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 export function NavUser() {
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
 
   const { isMobile } = useSidebar();
@@ -45,7 +46,7 @@ export function NavUser() {
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">Admin</span>
+                <span className="truncate font-medium">{t("Admin")}</span>
               </div>
               <IconDotsVertical className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -64,21 +65,21 @@ export function NavUser() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Admin</span>
+                  <span className="truncate font-medium">{t("Admin")}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
+            {/* <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => navigate("/profile/detail")}>
                 <IconUserCircle />
-                Account
+                {t("Profile")}
               </DropdownMenuItem>
-            </DropdownMenuGroup>
+            </DropdownMenuGroup> */}
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout}>
               <IconLogout />
-              Log out
+              {t("Logout")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

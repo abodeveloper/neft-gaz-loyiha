@@ -1,6 +1,0 @@
-export enum TestType {
-  READING = "READING",
-  LISTENING = "LISTENING",
-  WRITING = "WRITING",
-  SPEAKING = "SPEAKING",
-}

@@ -6,13 +6,17 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { LoginFormValues, loginSchema } from "../schemas/login-schema";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 export const useLoginForm = () => {
+
+  const {t} = useTranslation();
+
   const navigate = useNavigate();
   const { login: loginToStore, loading } = useAuthStore();
 
   const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(loginSchema(t)),
     defaultValues: {
       username: "admin",
       password: "12345",

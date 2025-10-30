@@ -7,11 +7,11 @@ import {
   FormMessage,
 } from "@/components/ui/form.tsx";
 import { Input, InputProps } from "@/components/ui/input.tsx";
-import { cn } from "@/lib/utils";
-import { FormItemProps } from "@/shared/interfaces/form-item.props";
-import { get } from "lodash";
 import { FieldPath, FieldValues } from "react-hook-form";
+import { FormItemProps } from "@/shared/interfaces/form-item.props.ts";
 import { twMerge } from "tailwind-merge";
+import { get } from "lodash";
+import { cn } from "@/lib/utils";
 
 export type MyInputProps<TFieldValues extends FieldValues> =
   FormItemProps<TFieldValues> & InputProps;
@@ -59,8 +59,8 @@ const MyInput = <TFieldValues extends FieldValues>({
               className={twMerge(["mt-2", className])}
             />
           </FormControl>
-          {helperText && <FormDescription>{helperText}</FormDescription>}
-          <FormMessage className={cn(floatingError)} />
+          <FormDescription>{helperText}</FormDescription>
+          <FormMessage className={cn(floatingError && "absolute")} />
         </FormItem>
       )}
     />

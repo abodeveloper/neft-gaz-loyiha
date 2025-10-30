@@ -1,4 +1,11 @@
-import * as React from "react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import {
   Table,
   TableBody,
@@ -7,21 +14,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import LoadingSpinner from "@/shared/components/atoms/loading-spinner/LoadingSpinner";
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationPrevious,
-  PaginationLink,
-  PaginationNext,
-} from "@/components/ui/pagination";
-import LoadingSpinner from "@/shared/components/atoms/loading-spinner/LoadingSpinner";
+import { useTranslation } from "react-i18next";
 
 interface DataTableProps<TData> {
   data: TData[];
@@ -33,7 +33,7 @@ interface DataTableProps<TData> {
   currentPage?: number;
   onPageChange?: (page: number) => void;
   isLoading?: boolean;
-  onRowClick?: (row: TData) => void; // ✅ qo‘shildi
+  onRowClick?: (row: TData) => void;
 }
 
 export function DataTable<TData>({
@@ -46,8 +46,10 @@ export function DataTable<TData>({
   currentPage = 1,
   onPageChange,
   isLoading = false,
-  onRowClick, // ✅ qo‘shildi
+  onRowClick,
 }: DataTableProps<TData>) {
+  const { t } = useTranslation();
+
   const table = useReactTable({
     data,
     columns,
@@ -65,21 +67,30 @@ export function DataTable<TData>({
     },
   });
 
-  // Start va end index hisoblash
   const start = (currentPage - 1) * pageSize + 1;
   const end = Math.min(currentPage * pageSize, totalCount);
 
   return (
-    <div>
-      <div className="rounded-md border">
-        <Table>
+    <div className="w-full overflow-x-auto">
+      <div className="rounded-md border w-full">
+        <Table className="w-full">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup, hIndex) => (
               <TableRow key={headerGroup.id}>
-                {/* Tartib raqam uchun bosh column qo'shamiz */}
-                {hIndex === 0 && <TableHead className="w-[50px]">№</TableHead>}
+                {/* № column */}
+                {hIndex === 0 && (
+                  <TableHead style={{ width: 60 }} className="text-center">
+                    №
+                  </TableHead>
+                )}
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      width: (header.column.columnDef as any).size || "auto", // 🟢 width qo‘llanmoqda
+                    }}
+                    className="whitespace-nowrap"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -91,13 +102,14 @@ export function DataTable<TData>({
               </TableRow>
             ))}
           </TableHeader>
+
           <TableBody>
             {isLoading ? (
               <TableRow>
                 <TableCell colSpan={columns.length + 1}>
                   <LoadingSpinner
                     className="min-h-[350px]"
-                    message="Loading data ..."
+                    message={t("Loading data ...")}
                   />
                 </TableCell>
               </TableRow>
@@ -105,17 +117,24 @@ export function DataTable<TData>({
               table.getRowModel().rows.map((row, rowIndex) => (
                 <TableRow
                   key={row.id}
-                  className={
-                    onRowClick ? "cursor-pointer hover:bg-muted/50" : undefined
-                  } // ✅ style faqat onRowClick bo‘lsa
-                  onClick={() => onRowClick?.(row.original)} // ✅ qo‘shildi
+                  className={`${
+                    onRowClick ? "cursor-pointer hover:bg-muted/50" : ""
+                  }`}
+                  onClick={() => onRowClick?.(row.original)}
                 >
-                  {/* Har bir row uchun tartib raqam chiqadi */}
-                  <TableCell className="text-center">
+                  <TableCell
+                    className="text-center"
+                    style={{ width: 60, minWidth: 60 }}
+                  >
                     {start + rowIndex}
                   </TableCell>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      style={{
+                        width: (cell.column.columnDef as any).size || "auto", // 🟢 width qo‘llanmoqda
+                      }}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -130,18 +149,18 @@ export function DataTable<TData>({
                   colSpan={columns.length + 1}
                   className="h-[250px] text-center"
                 >
-                  No data.
+                  {t("No data available.")}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
+
       {pagination && (
         <div className="flex items-center justify-between py-4">
-          {/* Nechtadan nechta ko'rsatilayotgani */}
           <div className="text-sm flex items-center justify-content-center w-[200px]">
-            {`${start}-${end} / ${totalCount}`} items
+            {`${start}-${end} / ${totalCount}`}
           </div>
 
           <Pagination className="flex items-center justify-end">
@@ -154,6 +173,7 @@ export function DataTable<TData>({
                       ? "pointer-events-none opacity-50"
                       : "cursor-pointer"
                   }
+                  title={t("Previous")}
                 />
               </PaginationItem>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(
@@ -179,6 +199,7 @@ export function DataTable<TData>({
                       ? "pointer-events-none opacity-50"
                       : "cursor-pointer"
                   }
+                  title={t("Next")}
                 />
               </PaginationItem>
             </PaginationContent>

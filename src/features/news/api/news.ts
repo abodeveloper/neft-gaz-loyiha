@@ -44,8 +44,6 @@ export const createNew = async (data: NewDto) => {
     formData.append("image", data.image);
   }
 
-  console.log("FormData for createNew:", Array.from(formData.entries())); // Debug
-
   const response = await api.post("/api/posts/", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
@@ -69,8 +67,6 @@ export const updateNew = async (id: number, data: Partial<NewDto>) => {
   if (data.image instanceof File) {
     formData.append("image", data.image);
   }
-
-  console.log("FormData for updateNew:", Array.from(formData.entries())); // Debug
 
   const response = await api.patch(`/api/posts/${id}/`, formData, {
     headers: { "Content-Type": "multipart/form-data" },

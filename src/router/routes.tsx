@@ -9,11 +9,7 @@ const Layout = lazy(() => import("@/layout/layout"));
 const NewsPage = lazy(() => import("@/features/news/NewsPage"));
 const CreateNewsPage = lazy(() => import("@/features/news/CreateNewsPage"));
 const UpdateNewsPage = lazy(() => import("@/features/news/UpdateNewsPage"));
-
-//Admin sahifalari
-const TeacherDashboardPage = lazy(
-  () => import("@/features/teacher/dashboard/DashboardPage")
-);
+const NewsDetailPage = lazy(() => import("@/features/news/NewsDetailPage"));
 
 export const routes = [
   {
@@ -31,11 +27,14 @@ export const routes = [
     children: [
       { index: true, element: <Navigate to="home" /> },
       { path: "home", element: <div>Home</div> },
-      { path: "news-and-announcements", element: <NewsPage /> },
-      { path: "news-and-announcements/create", element: <CreateNewsPage /> },
       {
-        path: "news-and-announcements/update/:id",
-        element: <UpdateNewsPage />,
+        path: "news-and-announcements",
+        children: [
+          { index: true, element: <NewsPage /> },
+          { path: "create", element: <CreateNewsPage /> },
+          { path: "update/:id", element: <UpdateNewsPage /> },
+          { path: "view/:id", element: <NewsDetailPage /> },
+        ],
       },
       { path: "profile", element: <div>Profile</div> },
       {

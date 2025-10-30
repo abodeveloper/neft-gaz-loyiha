@@ -11,66 +11,68 @@ import {
   RiDashboardLine,
   RiMedalLine,
   RiNewspaperLine,
-  RiProfileLine
+  RiProfileLine,
 } from "@remixicon/react";
 import { IconHelp, IconSettings } from "@tabler/icons-react";
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
 import { NavUser } from "./nav-user";
 
-// O‘qituvchilar uchun menyu ma'lumotlari
-const data = {
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard/home",
-      icon: RiDashboardLine,
-    },
-    {
-      title: "News & Announcements",
-      url: "/dashboard/news-and-announcements",
-      icon: RiNewspaperLine,
-    },
-    // {
-    //   title: "Biz haqimizda",
-    //   url: "#",
-    //   icon: RiBookLine,
-    //   isActive: false,
-    //   items: [
-    //     { title: "Universitet haqida", url: "/teacher/tests/mock" },
-    //     { title: "Rahbariyat", url: "/teacher/tests/thematic" },
-    //     { title: "Tashkiliy tuzilma", url: "/teacher/tests/thematic" },
-    //     { title: "Ilmiy kengash", url: "/teacher/tests/thematic" },
-    //     { title: "Yutuqlar", url: "/teacher/tests/thematic" },
-    //   ],
-    // },
-    // {
-    //   title: "Groups",
-    //   url: "/teacher/groups",
-    //   icon: RiUserCommunityLine,
-    // },
-    {
-      title: "Profile",
-      url: "/dashboard/profile",
-      icon: RiProfileLine,
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "/dashboard/profile",
-      icon: IconSettings,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: IconHelp,
-    },
-  ],
-};
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { t } = useTranslation();
+
+  const data = {
+    navMain: [
+      {
+        title: t("Dashboard"),
+        url: "/dashboard/home",
+        icon: RiDashboardLine,
+      },
+      {
+        title: t("News & Announcements"),
+        url: "/dashboard/news-and-announcements",
+        icon: RiNewspaperLine,
+      },
+      // {
+      //   title: "Biz haqimizda",
+      //   url: "#",
+      //   icon: RiBookLine,
+      //   isActive: false,
+      //   items: [
+      //     { title: "Universitet haqida", url: "/teacher/tests/mock" },
+      //     { title: "Rahbariyat", url: "/teacher/tests/thematic" },
+      //     { title: "Tashkiliy tuzilma", url: "/teacher/tests/thematic" },
+      //     { title: "Ilmiy kengash", url: "/teacher/tests/thematic" },
+      //     { title: "Yutuqlar", url: "/teacher/tests/thematic" },
+      //   ],
+      // },
+      // {
+      //   title: "Groups",
+      //   url: "/teacher/groups",
+      //   icon: RiUserCommunityLine,
+      // },
+      // {
+      //   title: t("Profile"),
+      //   url: "/dashboard/profile",
+      //   icon: RiProfileLine,
+      // },
+    ],
+    navSecondary: [
+      // {
+      //   title: t("Settings"),
+      //   url: "/dashboard/profile",
+      //   icon: IconSettings,
+      // },
+      {
+        title: t("Get Help"),
+        url: "#",
+        icon: IconHelp,
+      },
+    ],
+  };
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader

@@ -1,7 +1,8 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 interface BackButtonProps {
   to?: string; // agar berilsa navigatsiya qiladi
@@ -20,10 +21,12 @@ export default function BackButton({
   size = "md",
   variant = "default",
   className = "",
-  ariaLabel = "Go back",
-  label = "Back",
+  ariaLabel,
+  label,
   iconOnly = false,
 }: BackButtonProps) {
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
 
   const sizeClass = {
@@ -51,10 +54,12 @@ export default function BackButton({
       variant={variant}
       onClick={handleClick}
       className={`${className} inline-flex items-center gap-2 ${sizeClass}`}
-      aria-label={ariaLabel}
+      aria-label={ariaLabel || t("Go back")}
     >
       <ArrowLeft className="w-4 h-4" />
-      {!iconOnly && <span className="whitespace-nowrap">{label}</span>}
+      {!iconOnly && (
+        <span className="whitespace-nowrap">{label || t("Back")}</span>
+      )}
     </Button>
   );
 }

@@ -1,28 +1,32 @@
 import {
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form.tsx";
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select.tsx";
-import { cn } from "@/lib/utils";
-import { FormItemProps } from "@/shared/interfaces/form-item.props";
-import { get } from "lodash";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { FieldPath, FieldValues } from "react-hook-form";
+import { FormItemProps } from "@/shared/interfaces/form-item.props";
 import { twMerge } from "tailwind-merge";
+import { get } from "lodash";
+import { cn } from "@/lib/utils";
 
 export type MySelectProps<TFieldValues extends FieldValues> =
   FormItemProps<TFieldValues> & {
-    options: { value: string | number; label: string }[]; // Select uchun opsiyalar
-  } & Omit<React.ComponentPropsWithoutRef<typeof SelectTrigger>, "children">;
+    placeholder?: string;
+    options: { value: string; label: string }[];
+    disabled?: boolean;
+    className?: string;
+    required?: boolean;
+  };
 
 const MySelect = <TFieldValues extends FieldValues>({
   control,
@@ -30,15 +34,16 @@ const MySelect = <TFieldValues extends FieldValues>({
   label,
   helperText,
   required,
+  placeholder = "Tanlang",
+  options,
+  disabled,
   className,
   rules,
   floatingError,
-  options, // Opsiyalar massivi
-  ...props // Boshqa SelectTrigger props'lari
 }: MySelectProps<TFieldValues>) => {
   const labelElm = label && (
-    <FormLabel className={"my-3"}>
-      {label} {required && <span className={"text-red-600"}>*</span>}
+    <FormLabel className="my-3">
+      {label} {required && <span className="text-red-600">*</span>}
     </FormLabel>
   );
 
@@ -50,59 +55,66 @@ const MySelect = <TFieldValues extends FieldValues>({
       render={({ field, formState }) => (
         <FormItem>
           {labelElm}
-          <FormControl>
-            <Select
-              onValueChange={field.onChange}
-              defaultValue={field.value}
-              value={field.value}
-              {...props}
-            >
+          <Select
+            onValueChange={(value) => {
+              // Agar maydon nomi "status" bo‘lsa → boolean qaytar
+              if (name === "status") {
+                field.onChange(value === "true");
+              } else {
+                field.onChange(value);
+              }
+            }}
+            value={
+              // status bo‘lsa → boolean → string
+              name === "status"
+                ? field.value === true
+                  ? "true"
+                  : "false"
+                : field.value?.toString()
+            }
+            disabled={disabled}
+          >
+            <FormControl>
               <SelectTrigger
-                className={twMerge(["mt-2", className])}
-                variant={
-                  get(formState.errors, `${name}.message`)
-                    ? "failure"
-                    : "default"
-                }
+                className={twMerge([
+                  "mt-2",
+                  get(formState.errors, `${name}.message`) && "border-red-500",
+                  className,
+                ])}
               >
-                <SelectValue
-                  placeholder={props.placeholder || "Select an option"}
-                />
+                <SelectValue placeholder={placeholder} />
               </SelectTrigger>
-              <SelectContent>
-                {options.map((option) => (
-                  <SelectItem
-                    key={option.value}
-                    value={option.value.toString()}
-                  >
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </FormControl>
-          {helperText && <FormDescription>{helperText}</FormDescription>}
-          <FormMessage className={cn(floatingError)} />
+            </FormControl>
+            <SelectContent>
+              {options.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <FormDescription>{helperText}</FormDescription>
+          <FormMessage className={cn(floatingError && "absolute")} />
         </FormItem>
       )}
     />
   ) : (
-    <>
+    <div className="space-y-2">
       {labelElm}
-      <Select {...props}>
+      <Select defaultValue="" disabled={disabled}>
         <SelectTrigger className={twMerge(["mt-2", className])}>
-          <SelectValue placeholder={props.placeholder || "Select an option"} />
+          <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
           {options.map((option) => (
-            <SelectItem key={option.value} value={option.value.toString()}>
+            <SelectItem key={option.value} value={option.value}>
               {option.label}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
       <FormDescription>{helperText}</FormDescription>
-    </>
+    </div>
   );
 };
 

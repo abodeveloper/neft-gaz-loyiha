@@ -1,15 +1,17 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { toastService } from "@/lib/toastService";
+import ConfirmationDialog from "@/shared/components/atoms/confirmation-dialog/ConfirmationDialog";
 import { RiDeleteBinLine, RiEditLine, RiEyeLine } from "@remixicon/react"; // Remix Icon
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { deleteNews } from "../api/news";
 import { News, NewsType } from "../types";
-import ConfirmationDialog from "@/shared/components/atoms/confirmation-dialog/ConfirmationDialog";
-import { toastService } from "@/lib/toastService";
 
 export function useNewColumns(): ColumnDef<News>[] {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -18,7 +20,7 @@ export function useNewColumns(): ColumnDef<News>[] {
     mutationFn: deleteNews,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["news"] });
-      toastService.success("Succesfully deleted !");
+      toastService.success(t("Succesfully deleted !"));
     },
     onError: (error) => {
       toastService.error(error.message);
@@ -32,55 +34,56 @@ export function useNewColumns(): ColumnDef<News>[] {
   return [
     {
       accessorKey: "title_uz",
-      header: "Title uz",
+      header: t("Title (uz)"),
       cell: ({ row }) => <div>{row.getValue("title_uz")}</div>,
     },
     {
       accessorKey: "title_ru",
-      header: "Title ru",
+      header: t("Title (ru)"),
       cell: ({ row }) => <div>{row.getValue("title_ru")}</div>,
     },
     {
       accessorKey: "title_en",
-      header: "Title en",
+      header: t("Title (en)"),
       cell: ({ row }) => <div>{row.getValue("title_en")}</div>,
     },
     {
       accessorKey: "type",
-      header: "Type",
+      header: t("Type"),
       cell: ({ row }) => (
         <div>
           <Badge variant="default">
-            {row.getValue("type") === NewsType.NEWS ? "News" : "Announcement"}
+            {row.getValue("type") === NewsType.NEWS
+              ? t("News")
+              : t("Announcement")}
           </Badge>
         </div>
       ),
     },
     {
       accessorKey: "status",
-      header: "Status",
+      header: t("Status"),
       cell: ({ row }) => (
         <div>
           {row.getValue("status") ? (
-            <Badge variant="success">Active</Badge>
+            <Badge variant="success">{t("Active")}</Badge>
           ) : (
-            <Badge variant="destructive">Inactive</Badge>
+            <Badge variant="destructive">{t("Inactive")}</Badge>
           )}
         </div>
       ),
     },
     {
       accessorKey: "id",
-      size: 20,
-      minSize: 500,
-      header: "Action",
+      size: 100,
+      header: t("Action"),
       cell: ({ row }) => (
         <div className="flex gap-2">
           <Button
             variant="outline"
             size="sm"
-            onClick={() => navigate(`/news/${row.getValue("id")}`)}
-            title="View"
+            onClick={() => navigate(`view/${row.getValue("id")}`)}
+            title={t("View")}
             disabled={isDeleting}
           >
             <RiEyeLine className="h-4 w-4" />
@@ -89,7 +92,7 @@ export function useNewColumns(): ColumnDef<News>[] {
             variant="outline"
             size="sm"
             onClick={() => navigate(`update/${row.getValue("id")}`)}
-            title="Edit"
+            title={t("Edit")}
             disabled={isDeleting}
           >
             <RiEditLine className="h-4 w-4" />
@@ -101,16 +104,16 @@ export function useNewColumns(): ColumnDef<News>[] {
                 variant="destructive"
                 size="sm"
                 disabled={isDeleting}
-                title="Delete"
+                title={t("Delete")}
               >
                 <RiDeleteBinLine className="h-4 w-4" />
               </Button>
             }
-            title="Delete Item"
-            description="Are you sure you want to delete this news item ?"
+            title={t("Delete Item")}
+            description={t("Are you sure you want to delete this news item ?")}
             onConfirm={() => deleteItem(row.getValue("id"))}
-            confirmText="Yes, Delete"
-            cancelText="No, Cancel"
+            confirmText={t("Yes, Delete")}
+            cancelText={t("No, Cancel")}
             isLoading={isDeleting}
           />
         </div>

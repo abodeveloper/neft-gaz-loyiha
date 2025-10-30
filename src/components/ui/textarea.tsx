@@ -1,6 +1,11 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import type { VariantProps } from "class-variance-authority";
+import { inputVariants } from "@/components/ui/input.tsx";
+
+export type TextareaProps = React.ComponentProps<"textarea"> &
+  VariantProps<typeof inputVariants>;
 
 const Textarea = React.forwardRef<
   HTMLTextAreaElement,

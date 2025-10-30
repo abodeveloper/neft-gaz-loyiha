@@ -5,7 +5,7 @@ export enum NewsType {
 
 export interface News {
   id: number;
-  title_uz: string;
+  title_uz?: string;
   title_ru?: string;
   title_en?: string;
   description_uz?: string;
