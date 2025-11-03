@@ -70,20 +70,25 @@ export const createMenu = async (data: MenuDto) => {
 };
 
 export const updateMenu = async (id: number, data: Partial<MenuDto>) => {
-  const formData = new FormData();
-  if (data.title_uz) formData.append("title_uz", data.title_uz);
-  if (data.title_ru) formData.append("title_ru", data.title_ru);
-  if (data.title_en) formData.append("title_en", data.title_en);
-
+  // slugni tayyorlab olish
   const slug = sanitizeSlug(data.page_slug, data.title_uz);
 
-  if (slug) formData.append("page_slug", slug);
-  if (data.position) formData.append("position", data.position);
-  if (data.status !== undefined)
-    formData.append("status", data.status.toString());
+  // yuboriladigan obyekt
+  const payload = {
+    title_uz: data.title_uz,
+    title_ru: data.title_ru,
+    title_en: data.title_en,
+    has_page: data.has_page,
+    page_slug: data.has_page ? slug : null,
+    position: data.position,
+    status: data.status,
+  };
 
-  const response = await api.patch(`/menu/menus/${id}/`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  // null yoki undefined bo‘lganlarni olib tashlaymiz
+  const filteredPayload = Object.fromEntries(
+    Object.entries(payload).filter(([_, v]) => v !== undefined && v !== null)
+  );
+
+  const response = await api.patch(`/menu/menus/${id}/`, filteredPayload);
   return response.data;
 };

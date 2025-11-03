@@ -2,11 +2,12 @@ import ErrorMessage from "@/shared/components/atoms/error-message/ErrorMessage";
 import LoadingSpinner from "@/shared/components/atoms/loading-spinner/LoadingSpinner";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getMenuById } from "./api/menu";
 import MenuForm from "./components/MenuForm";
 
 const UpdateMenuPage = () => {
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const { id } = useParams<{ id: string }>();
@@ -18,6 +19,10 @@ const UpdateMenuPage = () => {
     enabled: !!ID,
   });
 
+  const handleSuccess = () => {
+    navigate(-1)
+  };
+
   if (isLoading) return <LoadingSpinner />;
   if (isError)
     return (
@@ -27,7 +32,14 @@ const UpdateMenuPage = () => {
       />
     );
 
-  return <MenuForm mode="update" id={ID} initialData={data} />;
+  return (
+    <MenuForm
+      mode="update"
+      id={ID}
+      initialData={data}
+      handleSuccess={handleSuccess}
+    />
+  );
 };
 
 export default UpdateMenuPage;

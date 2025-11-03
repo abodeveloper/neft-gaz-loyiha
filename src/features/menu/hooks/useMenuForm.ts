@@ -49,7 +49,6 @@ export const useMenuForm = ({
     onSuccess: () => {
       toastService.success(t("Saved successfully"));
       if (handleSuccess) handleSuccess();
-      queryClient.invalidateQueries({ queryKey: ["menus"] });
     },
     onError: (error: AxiosError) => {
       const message = (error.response?.data as any)?.detail || error.message;
