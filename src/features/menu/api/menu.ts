@@ -75,6 +75,7 @@ export const updateMenu = async (id: number, data: Partial<MenuDto>) => {
 
   // yuboriladigan obyekt
   const payload = {
+    parent: data.parent,
     title_uz: data.title_uz,
     title_ru: data.title_ru,
     title_en: data.title_en,
