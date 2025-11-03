@@ -23,6 +23,7 @@ export default tseslint.config([
       // no-explicit-any qoidasini o‘chirish
       "@typescript-eslint/no-explicit-any": "off",
       '@typescript-eslint/ban-ts-comment': 'off',
+      'eslint@typescript-eslint/no-unused-expressions': 'off',
     },
   },
 ]);

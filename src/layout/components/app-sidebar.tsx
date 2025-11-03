@@ -8,12 +8,13 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
+  RiCarouselView,
   RiDashboardLine,
   RiMedalLine,
+  RiMenu2Line,
   RiNewspaperLine,
-  RiProfileLine,
 } from "@remixicon/react";
-import { IconHelp, IconSettings } from "@tabler/icons-react";
+import { IconHelp } from "@tabler/icons-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { NavMain } from "./nav-main";
@@ -34,6 +35,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t("News & Announcements"),
         url: "/dashboard/news-and-announcements",
         icon: RiNewspaperLine,
+      },
+      {
+        title: t("Carousels"),
+        url: "/dashboard/carousels",
+        icon: RiCarouselView,
+      },
+      {
+        title: t("Menu"),
+        url: "/dashboard/menus",
+        icon: RiMenu2Line,
       },
       // {
       //   title: "Biz haqimizda",

@@ -53,7 +53,7 @@ const MySelect = <TFieldValues extends FieldValues>({
       name={name}
       rules={rules}
       render={({ field, formState }) => (
-        <FormItem>
+        <FormItem className="space-y-2">
           {labelElm}
           <Select
             onValueChange={(value) => {
