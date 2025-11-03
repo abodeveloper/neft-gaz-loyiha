@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 export type MySelectProps<TFieldValues extends FieldValues> =
   FormItemProps<TFieldValues> & {
     placeholder?: string;
-    options: { value: string; label: string }[];
+    options: { value: string | boolean | number; label: string }[];
     disabled?: boolean;
     className?: string;
     required?: boolean;
@@ -57,22 +57,13 @@ const MySelect = <TFieldValues extends FieldValues>({
           {labelElm}
           <Select
             onValueChange={(value) => {
-              // Agar maydon nomi "status" bo‘lsa → boolean qaytar
-              if (name === "status") {
-                field.onChange(value === "true");
-              } else {
-                field.onChange(value);
-              }
+              // Har qanday value → String → boolean yoki number
+              const parsed =
+                value === "true" ? true : value === "false" ? false : value;
+              field.onChange(parsed);
             }}
-            value={
-              // status bo‘lsa → boolean → string
-              name === "status"
-                ? field.value === true
-                  ? "true"
-                  : "false"
-                : field.value?.toString()
-            }
-            disabled={disabled}
+            value={String(field.value)} // Har doim string!
+            disabled={disabled || options.length === 0}
           >
             <FormControl>
               <SelectTrigger
@@ -86,11 +77,20 @@ const MySelect = <TFieldValues extends FieldValues>({
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {options.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
+              {options.length === 0 ? (
+                <SelectItem value="empty" disabled>
+                  Ma'lumot yo'q
                 </SelectItem>
-              ))}
+              ) : (
+                options.map((option) => (
+                  <SelectItem
+                    key={String(option.value)} // key ham string
+                    value={String(option.value)} // value ham string!
+                  >
+                    {option.label}
+                  </SelectItem>
+                ))
+              )}
             </SelectContent>
           </Select>
           <FormDescription>{helperText}</FormDescription>
@@ -101,13 +101,13 @@ const MySelect = <TFieldValues extends FieldValues>({
   ) : (
     <div className="space-y-2">
       {labelElm}
-      <Select defaultValue="" disabled={disabled}>
+      <Select defaultValue="" disabled={disabled || options.length === 0}>
         <SelectTrigger className={twMerge(["mt-2", className])}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
           {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
+            <SelectItem key={String(option.value)} value={String(option.value)}>
               {option.label}
             </SelectItem>
           ))}

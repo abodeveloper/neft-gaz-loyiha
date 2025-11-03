@@ -1,7 +1,13 @@
 import api from "@/lib/axios";
 import { MenuDto } from "../schemas/createMenuSchema";
+import { Menu } from "../types";
 
-export const getMenusData = async (search: string, filterQuery: string) => {
+export const getAllMenus = async (): Promise<Menu[]> => {
+  const { data } = await api.get("/menu/menus/");
+  return data;
+};
+
+export const getMenusData = async (search: string, filterQuery?: string) => {
   let url = `/menu/menus/`;
 
   if (search) {
@@ -46,20 +52,20 @@ const sanitizeSlug = (slug?: string, fallback?: string) => {
 };
 
 export const createMenu = async (data: MenuDto) => {
-  const formData = new FormData();
-
   const slug = sanitizeSlug(data.page_slug, data.title_uz);
 
-  formData.append("title_uz", data.title_uz);
-  if (data.title_ru) formData.append("title_ru", data.title_ru);
-  if (data.title_en) formData.append("title_en", data.title_en);
-  formData.append("page_slug", slug);
-  if (data.position) formData.append("position", data.position);
-  formData.append("status", data.status.toString());
+  const payload = {
+    parent: data.parent,
+    title_uz: data.title_uz,
+    title_ru: data.title_ru || undefined,
+    title_en: data.title_en || undefined,
+    has_page: data.has_page,
+    page_slug: data.has_page ? slug : null,
+    position: data.position || undefined,
+    status: data.status,
+  };
 
-  const response = await api.post("/menu/menus/", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const response = await api.post("/menu/menus/", payload);
   return response.data;
 };
 

@@ -25,6 +25,8 @@ const CarouselDetailPage = lazy(
 const MenusPage = lazy(() => import("@/features/menu/MenusPage"));
 const CreateMenuPage = lazy(() => import("@/features/menu/CreateMenuPage"));
 const UpdateMenuPage = lazy(() => import("@/features/menu/UpdateMenuPage"));
+const MenuDetailPage = lazy(() => import("@/features/menu/MenuDetailPage"));
+
 
 export const routes = [
   {
@@ -66,6 +68,7 @@ export const routes = [
           { index: true, element: <MenusPage /> },
           { path: "create", element: <CreateMenuPage /> },
           { path: "update/:id", element: <UpdateMenuPage /> },
+          { path: "view/:id", element: <MenuDetailPage /> },
         ],
       },
       { path: "profile", element: <div>Profile</div> },

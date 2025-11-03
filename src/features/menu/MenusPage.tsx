@@ -11,13 +11,11 @@ import {
 import ErrorMessage from "@/shared/components/atoms/error-message/ErrorMessage";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { buildFilterQuery } from "@/shared/utils/helper";
-import { RiAddLine } from "@remixicon/react";
 import { useQuery } from "@tanstack/react-query";
 import { isEmpty } from "lodash";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import { getMenusData } from "./api/menu";
 import CreateMenuModal from "./components/CreateMenuModal";
 import { useMenuColumns } from "./hooks/useMenuColumns";
@@ -28,7 +26,6 @@ interface FilterForm {
 
 export default function MenusPage() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState("");
   const [filterQuery, setFilterQuery] = useState("");
   const debouncedSearch = useDebounce<string>(searchInput, 300); // 300ms kechikish
@@ -39,12 +36,12 @@ export default function MenusPage() {
     },
   });
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["menus", debouncedSearch, filterQuery],
     queryFn: () => getMenusData(debouncedSearch, filterQuery),
   });
 
-  const columns = useMenuColumns();
+  const columns = useMenuColumns(refetch);
 
   // Data va pagination ma'lumotlari
   const tableData = isEmpty(data) ? [] : data;

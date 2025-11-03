@@ -11,18 +11,25 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import MenuForm from "./MenuForm";
 
-const CreateMenuModal = ({ parentId }: { parentId?: string | number }) => {
+const CreateMenuModal = ({
+  parentId,
+  onSuccess,
+}: {
+  parentId?: string | number;
+  onSuccess?: () => void;
+}) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   const handleSuccess = () => {
     setOpen(false);
+    if (onSuccess) onSuccess(); // ✅ faqat mavjud bo‘lsa chaqiriladi
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default" className="">
+        <Button variant="default">
           <RiAddLine className="h-5 w-5" /> {t("Create")}
         </Button>
       </DialogTrigger>
@@ -39,6 +46,7 @@ const CreateMenuModal = ({ parentId }: { parentId?: string | number }) => {
             mode="create"
             handleSuccess={handleSuccess}
             initialData={{ parent: parentId || null }}
+            parentId={parentId}
           />
         </div>
       </DialogContent>

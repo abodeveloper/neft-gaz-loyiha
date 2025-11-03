@@ -17,7 +17,10 @@ export const createMenuSchema = (t: (key: string) => string) =>
       .min(1, { message: t("Required field") })
       .max(255, { message: t("Title must be at most 255 characters") }),
 
-    page_slug: z.string().min(1, { message: t("Required field") }),
+    has_page: z.boolean().refine((val) => val !== undefined, {
+      message: t("Required field"),
+    }),
+    page_slug: z.string().optional(),
 
     position: z.number().min(1, { message: t("Required field") }),
 

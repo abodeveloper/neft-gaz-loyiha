@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { get } from "lodash";
 import { useForm, UseFormReturn } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { createMenu, updateMenu } from "../api/menu";
 import { createMenuSchema, MenuDto } from "../schemas/createMenuSchema";
 
@@ -27,8 +26,6 @@ export const useMenuForm = ({
   onSubmit: (data: MenuDto) => Promise<void>;
   mutation: ReturnType<typeof useMutation<any, AxiosError, MenuDto>>;
 } => {
-  const navigate = useNavigate();
-
   const queryClient = useQueryClient();
 
   const form = useForm<MenuDto, undefined, MenuDto>({
@@ -39,6 +36,7 @@ export const useMenuForm = ({
       title_uz: get(initialData, "title_uz", ""),
       title_ru: get(initialData, "title_ru", ""),
       title_en: get(initialData, "title_en", ""),
+      has_page: get(initialData, "has_page", true),
       page_slug: get(initialData, "page_slug", ""),
       position: get(initialData, "position"),
       status: get(initialData, "status", true),
@@ -50,7 +48,7 @@ export const useMenuForm = ({
       mode === "create" ? createMenu(data) : updateMenu(id!, data),
     onSuccess: () => {
       toastService.success(t("Saved successfully"));
-      handleSuccess && handleSuccess();
+      if (handleSuccess) handleSuccess();
       queryClient.invalidateQueries({ queryKey: ["menus"] });
     },
     onError: (error: AxiosError) => {

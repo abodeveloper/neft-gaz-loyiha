@@ -1,12 +1,9 @@
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormDescription,
-  FormItem,
-  FormLabel
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { MyInput, MySelect } from "@/shared/components/atoms/form-elements";
+import { useData } from "@/shared/hooks/useData";
 import { useTranslation } from "react-i18next";
+import { getAllMenus } from "../api/menu";
 import { useMenuForm } from "../hooks/useMenuForm";
 
 interface FormProps {
@@ -14,9 +11,16 @@ interface FormProps {
   id?: number;
   initialData?: any;
   handleSuccess?: () => void;
+  parentId?: any;
 }
 
-const MenuForm = ({ mode, id, initialData, handleSuccess }: FormProps) => {
+const MenuForm = ({
+  mode,
+  id,
+  initialData,
+  handleSuccess,
+  parentId,
+}: FormProps) => {
   const { t } = useTranslation();
 
   const { form, onSubmit, mutation } = useMenuForm({
@@ -27,24 +31,39 @@ const MenuForm = ({ mode, id, initialData, handleSuccess }: FormProps) => {
     handleSuccess,
   });
 
-  const { control, handleSubmit } = form;
+  const { control, handleSubmit, watch } = form;
 
   const statusOptions = [
     { value: "true", label: t("Active") },
     { value: "false", label: t("Inactive") },
   ];
 
+  const {
+    options: menuOptions = [], // DEFAULT []
+  } = useData({
+    fetchFn: getAllMenus,
+    labelKey: "title_en",
+    valueKey: "id",
+    queryKey: ["menus", "all"],
+  });
+
   return (
     <div className="space-y-6 w-full max-w-4xl mx-auto">
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {form.getValues("parent") && (
-            <FormItem className="space-y-2">
-              <FormLabel className="my-3">{t("Parent Menu")}</FormLabel>
-              <FormDescription>{form.getValues("parent")}</FormDescription>
-            </FormItem>
+          {/* Parent Menu */}
+          {parentId && (
+            <MySelect
+              control={control}
+              name="parent"
+              label={t("Parent menu")}
+              placeholder={t("Select parent menu")}
+              options={menuOptions}
+              disabled={true}
+            />
           )}
 
+          {/* Titles */}
           <MyInput
             control={control}
             name="title_uz"
@@ -66,13 +85,37 @@ const MenuForm = ({ mode, id, initialData, handleSuccess }: FormProps) => {
             placeholder={t("Title (en)")}
             required
           />
-          <MyInput
+
+          <MySelect
             control={control}
-            name="page_slug"
-            label={t("Page slug")}
-            placeholder={t("Page slug")}
+            name="has_page"
+            label={t("Type")}
+            placeholder={t("Select type")}
+            options={[
+              {
+                label: t("Page"),
+                value: true,
+              },
+              {
+                label: t("Section"),
+                value: false,
+              },
+            ]}
             required
           />
+
+          {/* Has Page */}
+          {/* <MyCheckbox control={control} name="has_page" label={t("Has page")} /> */}
+          {watch("has_page") && (
+            <MyInput
+              control={control}
+              name="page_slug"
+              label={t("Page slug")}
+              placeholder={t("Page slug")}
+              required
+            />
+          )}
+
           {/* Type + Status */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <MySelect
@@ -92,6 +135,7 @@ const MenuForm = ({ mode, id, initialData, handleSuccess }: FormProps) => {
               required
             />
           </div>
+
           <Button
             type="submit"
             className="w-full"
