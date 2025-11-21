@@ -13,8 +13,8 @@ import { useDebounce } from "@/shared/hooks/useDebounce";
 import { buildFilterQuery } from "@/shared/utils/helper";
 import { RiAddLine } from "@remixicon/react";
 import { useQuery } from "@tanstack/react-query";
-import { get } from "lodash";
-import { useEffect, useState } from "react";
+import { isEmpty } from "lodash";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -28,7 +28,6 @@ interface FilterForm {
 export default function CarouselsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
   const [filterQuery, setFilterQuery] = useState("");
   const debouncedSearch = useDebounce<string>(searchInput, 300); // 300ms kechikish
@@ -40,24 +39,15 @@ export default function CarouselsPage() {
   });
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["carousels", page, debouncedSearch, filterQuery],
-    queryFn: () => getCarouselsData(page, debouncedSearch, filterQuery),
+    queryKey: ["carousels", debouncedSearch, filterQuery],
+    queryFn: () => getCarouselsData(debouncedSearch, filterQuery),
   });
 
   const columns = useCarouselColumns();
 
-  // Data va pagination ma'lumotlari
-  const tableData = get(data, "results", []);
-  const paginationInfo = {
-    totalCount: get(data, "count", 0),
-    totalPages: get(data, "total_pages", 1),
-    currentPage: page,
-  };
+  // Data
 
-  // Qidiruv yoki filter o‘zgarganda sahifani 1 ga qaytarish
-  useEffect(() => {
-    setPage(1);
-  }, [debouncedSearch, filterQuery]);
+  const tableData = isEmpty(data) ? [] : data;
 
   if (isError)
     return (
@@ -78,7 +68,6 @@ export default function CarouselsPage() {
     });
     setFilterQuery(""); // Filter queryni tozalash
     setSearchInput(""); // Qidiruv maydonini tozalash
-    setPage(1); // Sahifani boshlang‘ich holatga qaytarish
   };
 
   return (
@@ -133,15 +122,8 @@ export default function CarouselsPage() {
         <DataTable
           data={tableData}
           columns={columns}
-          pagination={true}
-          totalCount={paginationInfo.totalCount}
-          totalPages={paginationInfo.totalPages}
-          currentPage={paginationInfo.currentPage}
-          onPageChange={setPage}
+          pagination={false}
           isLoading={isLoading}
-          onRowClick={(row) => {
-            // navigate(`${row.id}`);
-          }}
         />
       </div>
     </div>

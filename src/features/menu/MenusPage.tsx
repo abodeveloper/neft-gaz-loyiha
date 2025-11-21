@@ -43,7 +43,7 @@ export default function MenusPage() {
 
   const columns = useMenuColumns(refetch);
 
-  // Data va pagination ma'lumotlari
+  // Data
   const tableData = isEmpty(data) ? [] : data;
 
   if (isError)
@@ -78,13 +78,6 @@ export default function MenusPage() {
             onChange={(event) => setSearchInput(event.target.value)}
             className="max-w-sm w-64"
           />
-          {/* <Button
-            variant="default"
-            onClick={() => navigate(`create`)}
-            title={t("Create")}
-          >
-            <RiAddLine className="h-5 w-5" /> {t("Create")}
-          </Button> */}
           <CreateMenuModal />
         </div>
       </div>

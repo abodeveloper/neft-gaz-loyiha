@@ -9,6 +9,9 @@ import "./index.css";
 import "./global.css";
 import { ThemeProvider } from "./components/ui/theme-provider";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import "lightgallery/css/lightgallery.css";
+import "lightgallery/css/lg-zoom.css";
+import "lightgallery/css/lg-thumbnail.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

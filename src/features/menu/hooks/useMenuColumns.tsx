@@ -9,26 +9,32 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { deleteMenu } from "../api/menu";
 import { Menu } from "../types";
+import { useState } from "react";
 
 export function useMenuColumns(
-  refetch: () => Promise<unknown> // ✅ to‘g‘ri tiplangan refetch
+  refetch: () => Promise<unknown>
 ): ColumnDef<Menu>[] {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [deletingId, setDeletingId] = useState<number | null>(null); // ✅ faqat shu id uchun
 
-  const { mutate: deleteMutation, isPending: isDeleting } = useMutation({
+  const { mutateAsync: deleteMutation } = useMutation({
     mutationFn: deleteMenu,
     onSuccess: async () => {
-      await refetch?.(); // ✅ mavjud bo‘lsa chaqiradi
+      await refetch?.();
       toastService.success(t("Successfully deleted!"));
     },
     onError: (error: any) => {
       toastService.error(error.message || t("An error occurred"));
     },
+    onSettled: () => {
+      setDeletingId(null); // ✅ har doim tozalaymiz
+    },
   });
 
-  const deleteItem = (id: number) => {
-    deleteMutation(id);
+  const deleteItem = async (id: any) => {
+    setDeletingId(id);
+    await deleteMutation(id);
   };
 
   return [
@@ -59,10 +65,14 @@ export function useMenuColumns(
     },
     {
       accessorKey: "page_slug",
-      header: t("Slug"),
+      header: t("Slug or children"),
       cell: ({ row }) =>
-        row.getValue("has_page") && (
+        row.getValue("has_page") ? (
           <Badge variant="secondary">{row.getValue("page_slug")}</Badge>
+        ) : (
+          <Badge variant="outline">
+            {t("Children")}: {row.original.children?.length || 0}
+          </Badge>
         ),
     },
     {
@@ -87,14 +97,17 @@ export function useMenuColumns(
       size: 140,
       header: t("Action"),
       cell: ({ row }) => {
+        const id = row.getValue("id");
         const hasPage = row.original.has_page;
+        const isDeleting = deletingId === id; // ✅ faqat shu satr uchun
+
         return (
           <div className="flex items-center gap-2 justify-end">
             {!hasPage && (
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => navigate(`/dashboard/menus/view/${row.getValue("id")}`)}
+                onClick={() => navigate(`/dashboard/menus/view/${id}`)}
                 title={t("View")}
                 disabled={isDeleting}
                 className="h-8 w-8"
@@ -106,7 +119,7 @@ export function useMenuColumns(
             <Button
               variant="outline"
               size="icon"
-              onClick={() => navigate(`update/${row.getValue("id")}`)}
+              onClick={() => navigate(`/dashboard/menus/update/${id}`)}
               title={t("Edit")}
               disabled={isDeleting}
               className="h-8 w-8"
@@ -128,10 +141,8 @@ export function useMenuColumns(
                 </Button>
               }
               title={t("Delete Item")}
-              description={t(
-                "Are you sure you want to delete this menu item ?"
-              )}
-              onConfirm={() => deleteItem(row.getValue("id"))}
+              description={t("Are you sure you want to delete this menu item?")}
+              onConfirm={() => deleteItem(id)}
               confirmText={t("Yes, Delete")}
               cancelText={t("No, Cancel")}
               isLoading={isDeleting}

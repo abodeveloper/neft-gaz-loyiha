@@ -47,7 +47,7 @@ export default function MenusPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-2">
-        <div className="text-xl font-semibold">{get(item, "title_uz")}</div>
+        <div className="text-xl font-semibold">{t('Menu')}: {get(item, "title_uz")}</div>
         <div className="flex gap-2">
           <CreateMenuModal parentId={itemId} onSuccess={handleSuccess} />
           <BackButton />

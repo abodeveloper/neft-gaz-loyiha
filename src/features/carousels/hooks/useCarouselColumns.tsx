@@ -2,7 +2,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toastService } from "@/lib/toastService";
 import ConfirmationDialog from "@/shared/components/atoms/confirmation-dialog/ConfirmationDialog";
-import { RiDeleteBinLine, RiEditLine, RiEyeLine } from "@remixicon/react"; // Remix Icon
+import ImageGallery from "@/shared/components/atoms/image-gallery/ImageGallery";
+import { RiDeleteBinLine, RiEditLine } from "@remixicon/react"; // Remix Icon
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { useTranslation } from "react-i18next";
@@ -52,19 +53,7 @@ export function useCarouselColumns(): ColumnDef<Carousel>[] {
       header: t("Image"),
       cell: ({ row }) => {
         const imageUrl = row.getValue("image") as string;
-        return (
-          <div>
-            {imageUrl ? (
-              <img
-                src={imageUrl}
-                alt="News"
-                className="w-20 rounded-md object-cover"
-              />
-            ) : (
-              <div className="w-20 h-12 rounded-md bg-muted" />
-            )}
-          </div>
-        );
+        return <div>{imageUrl && <ImageGallery images={[imageUrl]} />}</div>;
       },
     },
     {
@@ -72,7 +61,7 @@ export function useCarouselColumns(): ColumnDef<Carousel>[] {
       header: t("Link"),
       cell: ({ row }) => (
         <div>
-          <Badge variant="default">{row.getValue("link")}</Badge>
+          <Badge variant="secondary">{row.getValue("link")}</Badge>
         </div>
       ),
     },
@@ -104,7 +93,7 @@ export function useCarouselColumns(): ColumnDef<Carousel>[] {
       header: t("Action"),
       cell: ({ row }) => (
         <div className="flex gap-2">
-          <Button
+          {/* <Button
             variant="outline"
             size="sm"
             onClick={() => navigate(`view/${row.getValue("id")}`)}
@@ -112,7 +101,7 @@ export function useCarouselColumns(): ColumnDef<Carousel>[] {
             disabled={isDeleting}
           >
             <RiEyeLine className="h-4 w-4" />
-          </Button>
+          </Button> */}
           <Button
             variant="outline"
             size="sm"

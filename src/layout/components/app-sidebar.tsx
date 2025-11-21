@@ -13,6 +13,8 @@ import {
   RiMedalLine,
   RiMenu2Line,
   RiNewspaperLine,
+  RiPagesLine,
+  RiUserCommunityLine,
 } from "@remixicon/react";
 import { IconHelp } from "@tabler/icons-react";
 import * as React from "react";
@@ -45,6 +47,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t("Menu"),
         url: "/dashboard/menus",
         icon: RiMenu2Line,
+      },
+      {
+        title: t("Pages"),
+        url: "/dashboard/menu-pages",
+        icon: RiPagesLine,
+      },
+      {
+        title: t("Employees"),
+        url: "/dashboard/employees",
+        icon: RiUserCommunityLine,
       },
       // {
       //   title: "Biz haqimizda",

@@ -36,7 +36,7 @@ export const createCarouselSchema = (t: (key: string) => string) =>
       .url({ message: t("Invalid URL format") })
       .optional(),
 
-    position: z.string().min(1, { message: t("Required field") }),
+    position: z.number().min(1, { message: t("Required field") }),
 
     // STATUS — to‘g‘ri
     status: z.boolean().default(true),

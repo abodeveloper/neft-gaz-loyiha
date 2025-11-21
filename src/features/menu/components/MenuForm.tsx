@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import BackButton from "@/shared/components/atoms/back-button/BackButton";
 import { MyInput, MySelect } from "@/shared/components/atoms/form-elements";
 import { useData } from "@/shared/hooks/useData";
 import { useTranslation } from "react-i18next";
@@ -50,6 +51,13 @@ const MenuForm = ({
   return (
     <div className="space-y-6 w-full max-w-4xl mx-auto">
       <Form {...form}>
+        {mode === "update" && (
+          <div className="flex justify-between items-center">
+            <h1 className="text-xl font-semibold">{t("Update menu")}</h1>
+            <BackButton />
+          </div>
+        )}
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Parent Menu */}
           {parentId && (

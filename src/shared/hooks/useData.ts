@@ -34,7 +34,7 @@ export const useData = <T>({
 
     if (!labelKey || !valueKey) return [];
 
-    return data.map((item) => ({
+    return data?.map((item) => ({
       label:
         typeof labelKey === "function"
           ? labelKey(item)
