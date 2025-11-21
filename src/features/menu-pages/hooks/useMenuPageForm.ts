@@ -31,6 +31,9 @@ export const useMenuPageForm = ({
     //@ts-ignore
     resolver: zodResolver(updateMenuPageSchema(t)), // t uzatiladi
     defaultValues: {
+      title_uz: get(initialData, "title_uz", ""),
+      title_ru: get(initialData, "title_ru", ""),
+      title_en: get(initialData, "title_en", ""),
       description_uz: get(initialData, "description_uz", ""),
       description_ru: get(initialData, "description_ru", ""),
       description_en: get(initialData, "description_en", ""),

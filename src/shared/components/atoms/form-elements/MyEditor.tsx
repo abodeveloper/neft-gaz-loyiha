@@ -19,8 +19,9 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 export type MyEditorProps<TFieldValues extends FieldValues> =
   FormItemProps<TFieldValues> & {
     placeholder?: string;
-    height?: string; // masalan: "500px"
+    height?: string;
     required?: boolean;
+    disabled?: boolean; // Yangi qo'shildi!
   };
 
 const MyEditor = <TFieldValues extends FieldValues>({
@@ -31,6 +32,7 @@ const MyEditor = <TFieldValues extends FieldValues>({
   required = false,
   placeholder = "Matn kiriting...",
   height = "500px",
+  disabled = false, // Default: yoqilmagan
   rules,
   floatingError,
 }: MyEditorProps<TFieldValues>) => {
@@ -64,57 +66,87 @@ const MyEditor = <TFieldValues extends FieldValues>({
             {labelElm}
 
             <FormControl>
-              {/* CKEditor + to'g'ri balandlik + Powered by yo'q */}
               <div
                 className={cn(
-                  "rounded-lg border overflow-hidden shadow-sm",
+                  "overflow-hidden shadow-sm transition-all",
                   error
                     ? "border-red-500 ring-2 ring-red-500 ring-offset-2"
-                    : "border-input"
+                    : "border-input",
+                  disabled && "opacity-70 bg-gray-50 cursor-not-allowed"
                 )}
-                // CKEditor ichki editable maydoniga balandlik beramiz
-                style={
-                  {
-                    // @ts-ignore – CKEditor ichki CSS variabllari
-                    "--ck-editor-height": height,
-                  } as React.CSSProperties
-                }
+                style={{ "--ck-editor-height": height } as React.CSSProperties}
               >
                 <CKEditor
                   editor={ClassicEditor}
                   data={field.value || ""}
+                  disabled={disabled} // CKEditor o'zining disabled rejimi
                   config={{
                     placeholder,
-                    toolbar: [
-                      "heading",
-                      "|",
-                      "bold",
-                      "italic",
-                      "underline",
-                      "strikethrough",
-                      "|",
-                      "bulletedList",
-                      "numberedList",
-                      "|",
-                      "outdent",
-                      "indent",
-                      "|",
-                      "link",
-                      "blockquote",
-                      "imageUpload",
-                      "insertTable",
-                      "mediaEmbed",
-                      "|",
-                      "undo",
-                      "redo",
-                    ],
-                    // "Powered by CKEditor" ni butunlay o'chirish
-                    removePlugins: ["CKFinder"],
-                    // CKEditor 5 ning branding (footer) ni yo'q qilish
-                    // Classic build’da faqat CSS orqali yo‘q qilinadi
+                    toolbar: disabled
+                      ? [] // Agar disabled bo'lsa, toolbar butunlay yo'q
+                      : [
+                          "heading",
+                          "|",
+                          "bold",
+                          "italic",
+                          "underline",
+                          "strikethrough",
+                          "|",
+                          "bulletedList",
+                          "numberedList",
+                          "|",
+                          "outdent",
+                          "indent",
+                          "|",
+                          "link",
+                          "blockquote",
+                          "imageUpload",
+                          "insertTable",
+                          "mediaEmbed",
+                          "|",
+                          "undo",
+                          "redo",
+                        ],
+                    image: {
+                      toolbar: [
+                        "imageStyle:inline",
+                        "imageStyle:block",
+                        "imageStyle:side",
+                        "|",
+                        "toggleImageCaption",
+                        "imageTextAlternative",
+                      ],
+                    },
+                    // Disabled holatda ham rasm yuklashni bloklash
+                    ...(disabled && { readOnly: true }),
+                  }}
+                  onReady={(editor) => {
+                    if (!disabled) {
+                      // Faqat enabled bo'lganda adapter ishlaydi
+                      editor.plugins.get("FileRepository").createUploadAdapter =
+                        (loader) => {
+                          return {
+                            upload() {
+                              return loader.file.then(
+                                (file) =>
+                                  new Promise((resolve, reject) => {
+                                    const reader = new FileReader();
+                                    reader.onload = () =>
+                                      resolve({ default: reader.result });
+                                    reader.onerror = (error) => reject(error);
+                                    reader.readAsDataURL(file);
+                                  })
+                              );
+                            },
+                            abort() {},
+                          };
+                        };
+                    }
                   }}
                   onChange={(_event: any, editor: any) => {
-                    field.onChange(editor.getData());
+                    if (!disabled) {
+                      field.onChange(editor.getData());
+                    }
                   }}
                 />
               </div>

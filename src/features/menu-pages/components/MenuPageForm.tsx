@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { MyTextarea, MyEditor } from "@/shared/components/atoms/form-elements";
+import { MyEditor, MyInput } from "@/shared/components/atoms/form-elements";
 import { useTranslation } from "react-i18next";
 import { useMenuPageForm } from "../hooks/useMenuPageForm";
 
@@ -23,54 +23,61 @@ const MenuPageForm = ({ id, initialData, handleSuccess }: FormProps) => {
   const { control, handleSubmit } = form;
 
   return (
-    <div className="space-y-6 w-full max-w-4xl mx-auto">
+    <div className="space-y-6 w-full mx-auto">
       <Form {...form}>
-        <h1 className="text-xl font-semibold">{t("Update menu page")}</h1>
+        {/* <h1 className="text-xl font-semibold">{t("Update menu page")}</h1> */}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-
+          <MyInput
+            control={control}
+            name="title_uz"
+            label={t("Title (uz)")}
+            placeholder={t("Title (uz)")}
+            disabled={mutation.isPending}
+            required
+          />
           <MyEditor
             control={control}
             name="description_uz"
             label={t("Description (uz)")}
             placeholder={t("Enter a description in Uzbek...")}
+            disabled={mutation.isPending}
             required
           />
 
-          <MyTextarea
+          <MyInput
             control={control}
-            name="description_uz"
-            label={t("Description (uz)")}
-            placeholder={t("Enter a description in Uzbek...")}
-            rows={5}
-            maxLength={1000}
-            showCounter
+            name="title_ru"
+            label={t("Title (ru)")}
+            placeholder={t("Title (ru)")}
+            disabled={mutation.isPending}
             required
-            helperText={t("Required field. Maximum 1000 characters.")}
           />
 
-          <MyTextarea
+          <MyEditor
             control={control}
             name="description_ru"
             label={t("Description (ru)")}
             placeholder={t("Enter a description in Russian...")}
-            rows={5}
-            maxLength={1000}
-            showCounter
             required
-            helperText={t("Required field. Maximum 1000 characters.")}
           />
 
-          <MyTextarea
+          <MyInput
+            control={control}
+            name="title_en"
+            label={t("Title (en)")}
+            placeholder={t("Title (en)")}
+            disabled={mutation.isPending}
+            required
+          />
+
+          <MyEditor
             control={control}
             name="description_en"
             label={t("Description (en)")}
             placeholder={t("Enter a description in English...")}
-            rows={5}
-            maxLength={1000}
-            showCounter
+            disabled={mutation.isPending}
             required
-            helperText={t("Required field. Maximum 1000 characters.")}
           />
 
           <Button
