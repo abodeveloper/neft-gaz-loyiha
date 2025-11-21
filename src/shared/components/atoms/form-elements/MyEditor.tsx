@@ -19,7 +19,7 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 export type MyEditorProps<TFieldValues extends FieldValues> =
   FormItemProps<TFieldValues> & {
     placeholder?: string;
-    height?: string;   // masalan: "500px"
+    height?: string; // masalan: "500px"
     required?: boolean;
   };
 
@@ -68,13 +68,17 @@ const MyEditor = <TFieldValues extends FieldValues>({
               <div
                 className={cn(
                   "rounded-lg border overflow-hidden shadow-sm",
-                  error ? "border-red-500 ring-2 ring-red-500 ring-offset-2" : "border-input"
+                  error
+                    ? "border-red-500 ring-2 ring-red-500 ring-offset-2"
+                    : "border-input"
                 )}
                 // CKEditor ichki editable maydoniga balandlik beramiz
-                style={{
-                  // @ts-ignore – CKEditor ichki CSS variabllari
-                  "--ck-editor-height": height,
-                } as React.CSSProperties}
+                style={
+                  {
+                    // @ts-ignore – CKEditor ichki CSS variabllari
+                    "--ck-editor-height": height,
+                  } as React.CSSProperties
+                }
               >
                 <CKEditor
                   editor={ClassicEditor}
@@ -82,12 +86,27 @@ const MyEditor = <TFieldValues extends FieldValues>({
                   config={{
                     placeholder,
                     toolbar: [
-                      "heading", "|",
-                      "bold", "italic", "underline", "strikethrough", "|",
-                      "bulletedList", "numberedList", "|",
-                      "outdent", "indent", "|",
-                      "link", "blockquote", "imageUpload", "insertTable", "mediaEmbed", "|",
-                      "undo", "redo",
+                      "heading",
+                      "|",
+                      "bold",
+                      "italic",
+                      "underline",
+                      "strikethrough",
+                      "|",
+                      "bulletedList",
+                      "numberedList",
+                      "|",
+                      "outdent",
+                      "indent",
+                      "|",
+                      "link",
+                      "blockquote",
+                      "imageUpload",
+                      "insertTable",
+                      "mediaEmbed",
+                      "|",
+                      "undo",
+                      "redo",
                     ],
                     // "Powered by CKEditor" ni butunlay o'chirish
                     removePlugins: ["CKFinder"],
@@ -102,7 +121,9 @@ const MyEditor = <TFieldValues extends FieldValues>({
             </FormControl>
 
             {helperText && <FormDescription>{helperText}</FormDescription>}
-            <FormMessage className={cn(floatingError && "absolute -bottom-6")} />
+            <FormMessage
+              className={cn(floatingError && "absolute -bottom-6")}
+            />
           </FormItem>
         );
       }}

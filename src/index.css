@@ -86,3 +86,31 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+/* CKEditor ichki editable maydoniga balandlik */
+.ck-editor__editable {
+  min-height: var(--ck-editor-height, 400px) !important;
+  max-height: var(--ck-editor-height, 400px) !important;
+  height: var(--ck-editor-height, 400px) !important;
+}
+
+/* "Powered by CKEditor" butunlay yo'q qilish */
+.ck-editor__editable .ck-powered-by {
+  display: none !important;
+}
+
+/* Agar hali ham chiqsa – qattiq o'chirish */
+.ck-powered-by,
+.ck-editor__editable .ck-powered-by-balloon {
+  display: none !important;
+}

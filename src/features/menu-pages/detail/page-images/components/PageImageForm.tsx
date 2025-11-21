@@ -3,7 +3,7 @@ import { Form } from "@/components/ui/form";
 import BackButton from "@/shared/components/atoms/back-button/BackButton";
 import { MyFileInput } from "@/shared/components/atoms/form-elements";
 import { useTranslation } from "react-i18next";
-import { usePageImageForm } from "../hooks/usepageImageForm";
+import { usePageImageForm } from "../hooks/usePageImageForm";
 
 interface FormProps {
   mode: "create" | "update";
