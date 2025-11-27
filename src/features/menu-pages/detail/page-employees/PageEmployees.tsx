@@ -1,34 +1,41 @@
-import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
+import { getEmployeesDataByPage } from "@/features/employees/api/employees";
 import ErrorMessage from "@/shared/components/atoms/error-message/ErrorMessage";
 import { useDebounce } from "@/shared/hooks/useDebounce";
-import { RiAddLine } from "@remixicon/react";
 import { useQuery } from "@tanstack/react-query";
-import { isEmpty } from "lodash";
-import { useState } from "react";
+import { get } from "lodash";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import { getPageImagesData } from "./api/page-image";
-import { usePageImageColumns } from "./hooks/usePageImageColumns";
+import { useParams } from "react-router-dom";
+import { useEmployeeColumns } from "./hooks/useEmployeeColumns";
 
-export default function PageImages() {
-  const { id } = useParams();
+export default function PageEmployees() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const { id: pageId } = useParams();
+  const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearch = useDebounce<string>(searchInput, 300); // 300ms kechikish
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["page-images", debouncedSearch],
-    queryFn: () => getPageImagesData(id, debouncedSearch),
+    queryKey: ["page-employees", page, debouncedSearch],
+    queryFn: () => getEmployeesDataByPage(page, pageId, debouncedSearch),
   });
 
-  const columns = usePageImageColumns();
+  const columns = useEmployeeColumns();
 
-  // Data
+  // Data va pagination ma'lumotlari
+  const tableData = get(data, "results", []);
+  const paginationInfo = {
+    totalCount: get(data, "count", 0),
+    totalPages: get(data, "total_pages", 1),
+    currentPage: page,
+  };
 
-  const tableData = isEmpty(data) ? [] : data;
+  // Qidiruv yoki filter o‘zgarganda sahifani 1 ga qaytarish
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch]);
 
   if (isError)
     return (
@@ -41,7 +48,7 @@ export default function PageImages() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-2">
-        <div className="text-xl font-semibold">{t("Page Images")}</div>
+        <div className="text-xl font-semibold">{t("Employees")}</div>
         <div className="flex gap-2">
           <Input
             placeholder={t("Search ...")}
@@ -49,20 +56,17 @@ export default function PageImages() {
             onChange={(event) => setSearchInput(event.target.value)}
             className="max-w-sm w-64"
           />
-          <Button
-            variant="default"
-            onClick={() => navigate(`images/create`)}
-            title={t("Create")}
-          >
-            <RiAddLine className="h-5 w-5" /> {t("Create")}
-          </Button>
         </div>
       </div>
       <div className="space-y-4">
         <DataTable
           data={tableData}
           columns={columns}
-          pagination={false}
+          pagination={true}
+          totalCount={paginationInfo.totalCount}
+          totalPages={paginationInfo.totalPages}
+          currentPage={paginationInfo.currentPage}
+          onPageChange={setPage}
           isLoading={isLoading}
         />
       </div>

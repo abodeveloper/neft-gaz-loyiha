@@ -28,11 +28,6 @@ export const getMenuPageById = async (id: string | number | undefined) => {
   return response.data;
 };
 
-export const deleteMenuPage = async (id: number) => {
-  const response = await api.delete(`/menu/pages/${id}/`);
-  return response.data;
-};
-
 export const updateMenuPage = async (
   id: number,
   data: Partial<MenuPageDto>
@@ -50,5 +45,33 @@ export const updateMenuPage = async (
   );
 
   const response = await api.patch(`/menu/pages/${id}/`, filteredPayload);
+  return response.data;
+};
+
+export const getMenuPageEmployeesData = async (
+  page: number,
+  search: string,
+  filterQuery: string
+) => {
+  let url = `/menu/pages/?page=${page}`;
+  if (search) {
+    url += `&search=${search}`;
+  }
+  if (filterQuery) {
+    url += `&${filterQuery}`;
+  }
+  const response = await api.get(url);
+  return response.data;
+};
+
+export const getPageEmployeesData = async (pageId?: string, search?: string) => {
+  let url = `/menu/employees/?page=${pageId}`;
+
+  if (search) {
+    // search bo‘lsa, ?search= qo‘shamiz
+    url += `&search=${encodeURIComponent(search)}`;
+  }
+
+  const response = await api.get(url);
   return response.data;
 };

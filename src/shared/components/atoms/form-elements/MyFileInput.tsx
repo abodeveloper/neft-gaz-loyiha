@@ -22,10 +22,7 @@ import { useRef, useState } from "react";
 import { FieldPath, FieldValues } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-// Global File klass
-declare const File: typeof globalThis.File;
-
-export type MyFileInputProps<TFieldValues extends FieldValues> = {
+export type MyFileInputProps<TFieldValues extends FieldValues = FieldValues> = {
   control: any;
   name: FieldPath<TFieldValues>;
   label?: string;
@@ -46,7 +43,7 @@ const MyFileInput = <TFieldValues extends FieldValues>({
   placeholder = "Click or drag to upload file",
   accept = "*",
   multiple = false,
-  maxSize = 10240,
+  maxSize = 10240, // 10MB
   required = false,
   disabled = false,
 }: MyFileInputProps<TFieldValues>) => {
@@ -55,17 +52,14 @@ const MyFileInput = <TFieldValues extends FieldValues>({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const API_URL = import.meta.env.VITE_API_URL;
-  const UPLOADS_URL = import.meta.env.VITE_UPLOADS_URL || `${API_URL}`;
+  const UPLOADS_URL = import.meta.env.VITE_UPLOADS_URL || `${API_URL}/`;
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return "0 B";
     const k = 1024;
-    const sizes = ["B", "KB", "MB", "GB", "TB"];
+    const sizes = ["B", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    const index = Math.max(0, Math.min(i, sizes.length - 1));
-    return `${parseFloat((bytes / Math.pow(k, index)).toFixed(2))} ${
-      sizes[index]
-    }`;
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
   };
 
   const validateFile = (file: File): string | null => {
@@ -79,21 +73,32 @@ const MyFileInput = <TFieldValues extends FieldValues>({
 
   const getFileIcon = (file: File) => {
     const type = file.type;
-    if (type.startsWith("image/")) return <Image className="w-5 h-5" />;
-    if (type.startsWith("video/")) return <FileVideo className="w-5 h-5" />;
-    if (type.startsWith("audio/")) return <FileAudio className="w-5 h-5" />;
+    if (type.startsWith("image/")) return <Image className="w-6 h-6" />;
+    if (type.startsWith("video/")) return <FileVideo className="w-6 h-6" />;
+    if (type.startsWith("audio/")) return <FileAudio className="w-6 h-6" />;
     if (type.includes("pdf") || type.includes("document"))
-      return <FileText className="w-5 h-5" />;
-    return <FileIcon className="w-5 h-5" />;
+      return <FileText className="w-6 h-6" />;
+    return <FileIcon className="w-6 h-6" />;
   };
 
-  const isImage = (file: File) => file.type.startsWith("image/");
+  const isImageFile = (file: File | string) => {
+    if (file instanceof File) return file.type.startsWith("image/");
+    return /\.(jpe?g|png|gif|webp|svg)$/i.test(file);
+  };
 
-  const labelElm = label && (
-    <FormLabel className="my-3 flex items-center gap-1">
-      {label} {required && <span className="text-red-600">*</span>}
-    </FormLabel>
-  );
+  const getPreviewUrl = (item: File | string) => {
+    if (item instanceof File) {
+      return isImageFile(item) ? URL.createObjectURL(item) : null;
+    }
+    const filename = typeof item === "string" ? item : "";
+    return filename.startsWith("http")
+      ? filename
+      : `${UPLOADS_URL}${filename.replace(/^\/+/, "")}`;
+  };
+
+  const getFileName = (item: File | string) => {
+    return item instanceof File ? item.name : item.split("/").pop() || "file";
+  };
 
   return (
     <FormField
@@ -101,10 +106,22 @@ const MyFileInput = <TFieldValues extends FieldValues>({
       name={name}
       rules={{
         validate: (value) => {
-          if (required && !value) return t("File upload is required");
-          if (value instanceof File) {
-            return validateFile(value) || true;
+          if (required) {
+            if (multiple) {
+              const hasFiles =
+                Array.isArray(value) &&
+                value.some((v) => v instanceof File || typeof v === "string");
+              if (!hasFiles) return t("At least one file is required");
+            } else {
+              if (!value) return t("File is required");
+            }
           }
+
+          if (value instanceof File) {
+            const error = validateFile(value);
+            if (error) return error;
+          }
+
           if (multiple && Array.isArray(value)) {
             for (const file of value) {
               if (file instanceof File) {
@@ -117,60 +134,55 @@ const MyFileInput = <TFieldValues extends FieldValues>({
         },
       }}
       render={({ field }) => {
-        // Har safar to‘g‘ri normalizatsiya
-        const currentValue = field.value;
+        const value = field.value;
 
-        let currentFile: File | null = null;
-        let currentUrl: string | null = null;
-        let fileList: File[] = [];
-        let urlList: string[] = [];
+        // Qiymatni normalizatsiya qilamiz: string | File | (string|File)[]
+        let items: (File | string)[] = [];
 
         if (multiple) {
-          if (Array.isArray(currentValue)) {
-            currentValue.forEach((item) => {
-              if (item instanceof File) fileList.push(item);
-              else if (typeof item === "string") urlList.push(item);
-            });
+          if (Array.isArray(value)) {
+            items = value.filter(
+              (item) => item instanceof File || typeof item === "string"
+            );
+          } else if (value) {
+            items = [value];
           }
         } else {
-          if (currentValue instanceof File) {
-            currentFile = currentValue;
-          } else if (typeof currentValue === "string") {
-            currentUrl = currentValue;
+          if (value instanceof File || typeof value === "string") {
+            items = [value];
           }
         }
 
-        const getFileUrl = (filename: string) =>
-          filename.startsWith("http")
-            ? filename
-            : `${UPLOADS_URL}/${filename.replace(/^\/+/, "")}`;
-
-        const handleFileAdd = (newFiles: File[]) => {
+        const addFiles = (newFiles: File[]) => {
           if (multiple) {
-            const updated = [...fileList, ...newFiles];
-            field.onChange(updated);
-          } else {
-            const first = newFiles[0];
-            if (first) {
-              field.onChange(first); // Bitta fayl
-            }
+            field.onChange([...items, ...newFiles]);
+          } else if (newFiles[0]) {
+            field.onChange(newFiles[0]);
           }
         };
 
-        const handleRemove = () => {
-          field.onChange(multiple ? [] : null);
+        const removeItem = (index: number) => {
+          const updated = items.filter((_, i) => i !== index);
+          field.onChange(
+            multiple ? (updated.length ? updated : []) : updated[0] || null
+          );
           if (inputRef.current) inputRef.current.value = "";
         };
 
         return (
           <FormItem>
-            {labelElm}
+            {label && (
+              <FormLabel className="my-3 flex items-center gap-1">
+                {label} {required && <span className="text-red-600">*</span>}
+              </FormLabel>
+            )}
+
             <FormControl>
               <div className="space-y-4">
                 {/* Upload Zone */}
                 <div
                   className={cn(
-                    "relative border-2 border-dashed rounded-lg p-6 transition-all",
+                    "relative border-2 border-dashed rounded-lg p-8 transition-all text-center",
                     dragActive
                       ? "border-primary bg-primary/5"
                       : "border-muted-foreground/25",
@@ -187,12 +199,8 @@ const MyFileInput = <TFieldValues extends FieldValues>({
                   onDrop={(e) => {
                     e.preventDefault();
                     setDragActive(false);
-                    if (disabled) return;
-
-                    const dropped = Array.from(e.dataTransfer.files);
-                    if (dropped.length === 0) return;
-
-                    handleFileAdd(dropped);
+                    if (disabled || !e.dataTransfer.files.length) return;
+                    addFiles(Array.from(e.dataTransfer.files));
                   }}
                 >
                   <input
@@ -200,137 +208,101 @@ const MyFileInput = <TFieldValues extends FieldValues>({
                     type="file"
                     accept={accept}
                     multiple={multiple}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    onChange={(e) => {
-                      const selected = e.target.files;
-                      if (!selected || selected.length === 0) return;
-
-                      const newFileList = Array.from(selected);
-                      handleFileAdd(newFileList);
-                    }}
                     disabled={disabled}
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    onChange={(e) => {
+                      if (e.target.files?.length) {
+                        addFiles(Array.from(e.target.files));
+                        e.target.value = "";
+                      }
+                    }}
                   />
 
-                  <div className="flex flex-col items-center justify-center text-center space-y-2">
-                    <Upload
-                      className={cn(
-                        "w-10 h-10",
-                        dragActive ? "text-primary" : "text-muted-foreground"
-                      )}
-                    />
-                    <p className="text-sm text-muted-foreground">
-                      {t(placeholder)}
-                    </p>
-                    {maxSize > 0 && (
-                      <p className="text-xs text-muted-foreground">
-                        {t("Max")}: {formatFileSize(maxSize * 1024)}
-                      </p>
+                  <Upload
+                    className={cn(
+                      "w-12 h-12 mx-auto mb-3",
+                      dragActive ? "text-primary" : "text-muted-foreground"
                     )}
-                  </div>
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    {t(placeholder)}
+                  </p>
+                  {maxSize > 0 && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {t("Max size")}: {formatFileSize(maxSize * 1024)}
+                    </p>
+                  )}
                 </div>
 
-                {/* Fayllar ro‘yxati */}
-                <div className="space-y-2">
-                  {/* Backend URL */}
-                  {(multiple ? urlList : currentUrl ? [currentUrl] : []).map(
-                    (u, index) => {
-                      const fileName = u.split("/").pop() || u;
-                      const isImg = /\.(jpe?g|png|gif|webp|svg)$/i.test(
-                        fileName
-                      );
+                {/* Fayllar roʻyxati */}
+                {items.length > 0 && (
+                  <div className="space-y-3">
+                    {items.map((item, index) => {
+                      const isUrl = typeof item === "string";
+                      const fileName = getFileName(item);
+                      const previewUrl = getPreviewUrl(item);
+                      const isImg = isImageFile(item);
 
                       return (
                         <div
-                          key={`url-${index}`}
-                          className="flex items-center justify-between p-3 bg-muted rounded-lg"
+                          key={index}
+                          className="flex items-center justify-between p-4 bg-muted rounded-lg hover:bg-muted/80 transition"
                         >
-                          <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded overflow-hidden border bg-background flex items-center justify-center">
-                              {isImg ? (
+                          <div className="flex items-center gap-4">
+                            <div className="w-14 h-14 rounded overflow-hidden border bg-background flex-shrink-0">
+                              {isImg && previewUrl ? (
                                 <img
-                                  src={getFileUrl(u)}
+                                  src={previewUrl}
                                   alt={fileName}
                                   className="w-full h-full object-cover"
+                                  onLoad={() =>
+                                    item instanceof File &&
+                                    URL.revokeObjectURL(previewUrl)
+                                  }
                                 />
                               ) : (
-                                <FileIcon className="w-6 h-6 text-muted-foreground" />
+                                <div className="w-full h-full flex items-center justify-center">
+                                  {isUrl ? (
+                                    <FileIcon className="w-8 h-8 text-muted-foreground" />
+                                  ) : (
+                                    getFileIcon(item as File)
+                                  )}
+                                </div>
                               )}
                             </div>
-                            <div>
+
+                            <div className="min-w-0">
                               <p className="text-sm font-medium truncate max-w-xs">
                                 {fileName}
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                {t("Already uploaded")}
+                                {isUrl
+                                  ? t("Already uploaded")
+                                  : formatFileSize((item as File).size)}
                               </p>
                             </div>
                           </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={handleRemove}
-                            disabled={disabled}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
+
+                          {!disabled && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-9 w-9"
+                              onClick={() => removeItem(index)}
+                            >
+                              <X className="h-5 w-5" />
+                            </Button>
+                          )}
                         </div>
                       );
-                    }
-                  )}
-
-                  {/* Yangi fayl */}
-                  {(multiple ? fileList : currentFile ? [currentFile] : []).map(
-                    (f, index) => {
-                      const preview = isImage(f)
-                        ? URL.createObjectURL(f)
-                        : null;
-
-                      return (
-                        <div
-                          key={`file-${index}`}
-                          className="flex items-center justify-between p-3 bg-muted rounded-lg"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded overflow-hidden border bg-background flex items-center justify-center">
-                              {preview ? (
-                                <img
-                                  src={preview}
-                                  alt={f.name}
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                getFileIcon(f)
-                              )}
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium truncate max-w-xs">
-                                {f.name}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {formatFileSize(f.size)}
-                              </p>
-                            </div>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={handleRemove}
-                            disabled={disabled}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      );
-                    }
-                  )}
-                </div>
+                    })}
+                  </div>
+                )}
               </div>
             </FormControl>
-            <FormDescription>{helperText}</FormDescription>
+
+            {helperText && <FormDescription>{helperText}</FormDescription>}
             <FormMessage />
           </FormItem>
         );

@@ -70,96 +70,106 @@ export function DataTable<TData>({
   const start = (currentPage - 1) * pageSize + 1;
   const end = Math.min(currentPage * pageSize, totalCount);
 
+  
   return (
-    <div className="w-full overflow-x-auto">
-      <div className="rounded-md border w-full">
-        <Table className="w-full">
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup, hIndex) => (
-              <TableRow key={headerGroup.id}>
-                {/* № column */}
-                {hIndex === 0 && (
-                  <TableHead style={{ width: 60 }} className="text-center">
-                    №
-                  </TableHead>
-                )}
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    style={{
-                      width: (header.column.columnDef as any).size || "auto", // 🟢 width qo‘llanmoqda
-                    }}
-                    className="whitespace-nowrap"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={columns.length + 1}>
-                  <LoadingSpinner
-                    className="min-h-[350px]"
-                    message={t("Loading data ...")}
-                  />
-                </TableCell>
-              </TableRow>
-            ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row, rowIndex) => (
-                <TableRow
-                  key={row.id}
-                  className={`${
-                    onRowClick ? "cursor-pointer hover:bg-muted/50" : ""
-                  }`}
-                  onClick={() => onRowClick?.(row.original)}
-                >
-                  <TableCell
-                    className="text-center"
-                    style={{ width: 60, minWidth: 60 }}
-                  >
-                    {start + rowIndex}
-                  </TableCell>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      style={{
-                        width: (cell.column.columnDef as any).size || "auto", // 🟢 width qo‘llanmoqda
-                      }}
+    <div className="w-full">
+      {/* Horizontal scroll container */}
+      <div className="w-full overflow-x-auto">
+        <div className=" border w-full">
+          {/* Table MUST have min-w-max / w-max to enable scrolling */}
+          <Table className="w-max min-w-full rounded-md">
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup, hIndex) => (
+                <TableRow key={headerGroup.id}>
+                  {/* № column */}
+                  {hIndex === 0 && (
+                    <TableHead
+                      style={{ width: 60 }}
+                      className="text-center sticky left-0 bg-background z-10"
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
+                      №
+                    </TableHead>
+                  )}
+
+                  {headerGroup.headers.map((header) => (
+                    <TableHead
+                      key={header.id}
+                      style={{
+                        width: (header.column.columnDef as any).size || "auto",
+                      }}
+                      className="whitespace-nowrap"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length + 1}
-                  className="h-[250px] text-center"
-                >
-                  {t("No data available.")}
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+
+            <TableBody>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length + 1}>
+                    <LoadingSpinner
+                      className="min-h-[350px]"
+                      message={t("Loading data ...")}
+                    />
+                  </TableCell>
+                </TableRow>
+              ) : table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row, rowIndex) => (
+                  <TableRow
+                    key={row.id}
+                    className={`${
+                      onRowClick ? "cursor-pointer hover:bg-muted/50" : ""
+                    }`}
+                    onClick={() => onRowClick?.(row.original)}
+                  >
+                    <TableCell
+                      className="text-center sticky left-0 bg-background z-10"
+                      style={{ width: 60, minWidth: 60 }}
+                    >
+                      {start + rowIndex}
+                    </TableCell>
+
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        style={{
+                          width: (cell.column.columnDef as any).size || "auto",
+                        }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length + 1}
+                    className="h-[250px] text-center"
+                  >
+                    {t("No data available.")}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       {pagination && (
         <div className="flex items-center justify-between py-4">
-          <div className="text-sm flex items-center justify-content-center w-[200px]">
+          <div className="text-sm flex items-center justify-start w-[100px]">
             {`${start}-${end} / ${totalCount}`}
           </div>
 
@@ -176,6 +186,7 @@ export function DataTable<TData>({
                   title={t("Previous")}
                 />
               </PaginationItem>
+
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                 (pageNum) => (
                   <PaginationItem key={pageNum}>
@@ -189,6 +200,7 @@ export function DataTable<TData>({
                   </PaginationItem>
                 )
               )}
+
               <PaginationItem>
                 <PaginationNext
                   onClick={() =>

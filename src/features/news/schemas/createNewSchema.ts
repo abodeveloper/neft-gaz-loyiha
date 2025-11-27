@@ -32,18 +32,18 @@ export const createNewSchema = (t: (key: string) => string) =>
       .min(1, { message: t("Required field") })
       .max(1000, { message: t("Description must be at most 1000 characters") }),
 
-    // TYPE — to‘g‘ri
+    // TYPE
     type: z.nativeEnum(NewsType, {
       message: t("Required field"),
     }),
 
-    // STATUS — to‘g‘ri
+    // STATUS
     status: z.boolean().default(true),
 
-    // IMAGE — to‘g‘ri
-    image: z
-      .union(
-        [
+    // ARRAY OF IMAGES
+    upload_images: z
+      .array(
+        z.union([
           z
             .instanceof(File)
             .refine((file) => IMAGE_MIME_TYPES.includes(file.type), {
@@ -51,14 +51,12 @@ export const createNewSchema = (t: (key: string) => string) =>
             }),
           z.string().url(),
           z.null(),
-        ],
-        {
-          message: t("Required field"),
-        }
+        ])
       )
+      .min(1, { message: t("At least one image is required") })
       .optional()
       .nullable(),
   });
 
-// To‘g‘ri NewDto
+// DTO tipi
 export type NewDto = z.infer<ReturnType<typeof createNewSchema>>;

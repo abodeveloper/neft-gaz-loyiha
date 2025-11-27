@@ -35,6 +35,7 @@ export function usePageImageColumns(): ColumnDef<PageImage>[] {
     {
       accessorKey: "image",
       header: t("Image"),
+      size: 300,
       cell: ({ row }) => {
         const imageUrl = row.getValue("image") as string;
         return <div>{imageUrl && <ImageGallery images={[imageUrl]} />}</div>;
@@ -42,7 +43,7 @@ export function usePageImageColumns(): ColumnDef<PageImage>[] {
     },
     {
       accessorKey: "id",
-      size: 100,
+      size: 50,
       header: t("Action"),
       cell: ({ row }) => (
         <div className="flex gap-2">

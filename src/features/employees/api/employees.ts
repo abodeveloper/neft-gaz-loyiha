@@ -1,27 +1,23 @@
 import api from "@/lib/axios";
-import { CarouselDto } from "../schemas/createEmployeeSchema";
+import { EmployeeDto } from "../schemas/createEmployeeSchema";
 
-// export const getEmployeesData = async (search: string, filterQuery?: string) => {
-//   let url = `/menu/employees/`;
 
-//   if (search) {
-//     // search bo‘lsa, ?search= qo‘shamiz
-//     url += `?search=${encodeURIComponent(search)}`;
-//   }
-
-//   if (filterQuery) {
-//     // filterQuery allaqachon & bilan boshlanadi
-//     // agar search bo‘lmasa, ? ni qo‘shib, & ni olib tashlaymiz
-//     if (!search && filterQuery.startsWith("&")) {
-//       url += `?${filterQuery.slice(1)}`;
-//     } else {
-//       url += filterQuery;
-//     }
-//   }
-
-//   const response = await api.get(url);
-//   return response.data;
-// };
+export const getEmployeesDataByPage = async (
+  page: number,
+  pageId: string | undefined,
+  search?: string,
+  filterQuery?: string
+) => {
+  let url = `/menu/employees/?page=${page}&page_id=${pageId}`;
+  if (search) {
+    url += `&search=${search}`;
+  }
+  if (filterQuery) {
+    url += `&${filterQuery}`;
+  }
+  const response = await api.get(url);
+  return response.data;
+};
 
 export const getEmployeesData = async (
   page: number,
@@ -49,7 +45,7 @@ export const deleteEmployee = async (id: number) => {
   return response.data;
 };
 
-export const createEmployee = async (data: CarouselDto) => {
+export const createEmployee = async (data: EmployeeDto) => {
   const formData = new FormData();
   formData.append("full_name_uz", data.full_name_uz);
   if (data.full_name_ru) formData.append("full_name_ru", data.full_name_ru);
@@ -90,7 +86,7 @@ export const createEmployee = async (data: CarouselDto) => {
 
 export const updateEmployeee = async (
   id: number,
-  data: Partial<CarouselDto>
+  data: Partial<EmployeeDto>
 ) => {
   // Agar rasm File bo‘lmasa (ya’ni allaqachon mavjud bo‘lsa yoki string bo‘lsa)
   // u holda JSON orqali yuboramiz

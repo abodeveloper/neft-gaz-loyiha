@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getMenuPageById } from "../api/menu-page";
 import UpdateMenuPageContent from "./page-content/UpdateMenuPageContent";
+import PageEmployees from "./page-employees/PageEmployees";
 import PageFiles from "./page-files/PageFiles";
 import PageImages from "./page-images/PageImages";
 
@@ -67,14 +68,12 @@ export default function MenuPageDetailPage() {
           <PageImages />
         </TabsContent>
 
-        <TabsContent value="employees" className="mt-6">
-          <div className="p-4 border rounded-md bg-muted/40">
-            {t("This is the employees section.")}
-          </div>
-        </TabsContent>
-
         <TabsContent value="files" className="mt-6">
           <PageFiles />
+        </TabsContent>
+
+        <TabsContent value="employees" className="mt-6">
+          <PageEmployees />
         </TabsContent>
       </Tabs>
     </div>

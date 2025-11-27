@@ -40,8 +40,20 @@ export const createNew = async (data: NewDto) => {
     formData.append("description_en", data.description_en);
   formData.append("type", data.type);
   formData.append("status", data.status.toString());
-  if (data.image instanceof File) {
-    formData.append("image", data.image);
+
+  if (Array.isArray(data.upload_images)) {
+    data.upload_images.forEach((item) => {
+      if (item instanceof File) {
+        // Fayl bo'lsa
+        formData.append("upload_images", item);
+      } else if (typeof item === "string") {
+        // URL bo‘lsa
+        formData.append("upload_images", item);
+      } else {
+        // null — backendga null jo'natishni istamasangiz, skip qilamiz
+        // Agar kerak bo'lsa: formData.append("upload_images", "");
+      }
+    });
   }
 
   const response = await api.post("/api/posts/", formData, {
@@ -64,8 +76,20 @@ export const updateNew = async (id: number, data: Partial<NewDto>) => {
   if (data.type) formData.append("type", data.type);
   if (data.status !== undefined)
     formData.append("status", data.status.toString());
-  if (data.image instanceof File) {
-    formData.append("image", data.image);
+
+  if (Array.isArray(data.upload_images)) {
+    data.upload_images.forEach((item) => {
+      if (item instanceof File) {
+        // Fayl bo'lsa
+        formData.append("upload_images", item);
+      } else if (typeof item === "string") {
+        // URL bo‘lsa
+        formData.append("upload_images", item);
+      } else {
+        // null — backendga null jo'natishni istamasangiz, skip qilamiz
+        // Agar kerak bo'lsa: formData.append("upload_images", "");
+      }
+    });
   }
 
   const response = await api.patch(`/api/posts/${id}/`, formData, {

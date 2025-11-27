@@ -29,8 +29,8 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
   ];
 
   const statusOptions = [
-    { value: "true", label: t("Active") },
-    { value: "false", label: t("Inactive") },
+    { value: true, label: t("Active") },
+    { value: false, label: t("Inactive") },
   ];
 
   return (
@@ -126,16 +126,17 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
 
           <MyFileInput
             control={control}
-            name="image"
+            name="upload_images"
             label={t("Image")}
             accept="image/*"
             maxSize={5120}
             helperText={t("JPG, PNG, WEBP. Maksimal 5MB")}
             required={mode === "create"}
+            multiple={true}
           />
 
           {/* Joriy rasm */}
-          {initialData?.image &&
+          {/* {initialData?.image &&
             typeof initialData.image === "string" &&
             !form.getValues().image && (
               <div className="mt-4">
@@ -148,7 +149,7 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
                   className="h-40 w-40 object-cover rounded-lg border"
                 />
               </div>
-            )}
+            )} */}
 
           <Button
             type="submit"
