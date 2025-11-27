@@ -34,6 +34,9 @@ export const updateMenuPage = async (
 ) => {
   // yuboriladigan obyekt
   const payload = {
+    title_uz: data.title_uz,
+    title_ru: data.title_ru,
+    title_en: data.title_en,
     description_uz: data.description_uz,
     description_ru: data.description_ru,
     description_en: data.description_en,
