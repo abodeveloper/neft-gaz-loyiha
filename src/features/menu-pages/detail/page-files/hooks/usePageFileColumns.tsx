@@ -1,7 +1,14 @@
 import { Button } from "@/components/ui/button";
+import { localized } from "@/i18n";
 import { toastService } from "@/lib/toastService";
 import ConfirmationDialog from "@/shared/components/atoms/confirmation-dialog/ConfirmationDialog";
-import { RiDeleteBinLine, RiDownloadLine, RiEditLine } from "@remixicon/react"; // Remix Icon
+import {
+  RiDeleteBinLine,
+  RiDownloadLine,
+  RiEditLine,
+  RiEyeLine,
+  RiFileTextLine,
+} from "@remixicon/react"; // Remix Icon
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { useTranslation } from "react-i18next";
@@ -32,35 +39,74 @@ export function usePageFileColumns(): ColumnDef<PageFile>[] {
 
   return [
     {
-      accessorKey: "title_uz",
-      header: t("Title (uz)"),
-      cell: ({ row }) => <div>{row.getValue("title_uz")}</div>,
+      id: "title",
+      header: t("Title"),
+      cell: ({ row }) => {
+        const news = row.original;
+        const title = localized(news, "title");
+
+        return (
+          <div
+            className="max-w-md truncate font-medium"
+            title={title || undefined}
+          >
+            {title || (
+              <span className="text-muted-foreground">{t("No title")}</span>
+            )}
+          </div>
+        );
+      },
     },
     {
-      accessorKey: "title_ru",
-      header: t("Title (ru)"),
-      cell: ({ row }) => <div>{row.getValue("title_ru")}</div>,
-    },
-    {
-      accessorKey: "title_en",
-      header: t("Title (en)"),
-      cell: ({ row }) => <div>{row.getValue("title_en")}</div>,
-    },
-    {
-      accessorKey: "file",
+      id: "file",
       header: t("File"),
       cell: ({ row }) => {
-        const file = row.getValue("file") as string;
+        const item = row.original;
+        const fileUrl = item.file as string;
+        const fileName = fileUrl.split("/").pop()?.split("?")[0] || "file";
+
         return (
-          <div>
-            <a href={file} target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" className="flex items-center gap-2">
-                <>
-                  <RiDownloadLine className="w-4 h-4" />
-                  {t("Download")}
-                </>
-              </Button>
-            </a>
+          <div className="flex items-center gap-3">
+            <RiFileTextLine className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+            <div className="flex flex-col gap-2">
+              <span
+                className="text-sm font-medium truncate max-w-[200px]"
+                title={fileName}
+              >
+                {fileName}
+              </span>
+
+              <div className="flex gap-2">
+                {/* View */}
+                <Button variant="outline" size="sm" className="h-8">
+                  <a
+                    href={fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex gap-2"
+                  >
+                    <RiEyeLine className="h-4 w-4" />
+                    <span className="hidden sm:inline ml-1">{t("View")}</span>
+                  </a>
+                </Button>
+
+                {/* Download */}
+                <Button variant="default" size="sm" className="h-8">
+                  <a
+                    href={fileUrl}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex gap-2"
+                  >
+                    <RiDownloadLine className="h-4 w-4" />
+                    <span className="hidden sm:inline ml-1">
+                      {t("Download")}
+                    </span>
+                  </a>
+                </Button>
+              </div>
+            </div>
           </div>
         );
       },

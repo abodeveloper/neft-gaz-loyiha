@@ -2,12 +2,12 @@ import BackButton from "@/shared/components/atoms/back-button/BackButton";
 import ErrorMessage from "@/shared/components/atoms/error-message/ErrorMessage";
 import LoadingSpinner from "@/shared/components/atoms/loading-spinner/LoadingSpinner";
 import { useQuery } from "@tanstack/react-query";
-import { get } from "lodash";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 
 // ShadCN Tabs komponentlari
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { localized } from "@/i18n";
 import { getMenuPageById } from "../api/menu-page";
 import UpdateMenuPageContent from "./page-content/UpdateMenuPageContent";
 import PageEmployees from "./page-employees/PageEmployees";
@@ -44,7 +44,7 @@ export default function MenuPageDetailPage() {
       {/* Header */}
       <div className="flex items-center justify-between gap-2">
         <div className="text-xl font-semibold">
-          {t("Page")}: {get(item, "title_uz")}
+          {t("Page")}: {localized(item, "title")}
         </div>
         <div className="flex gap-2">
           <BackButton />

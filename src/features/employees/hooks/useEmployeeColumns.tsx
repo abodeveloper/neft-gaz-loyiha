@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { localized } from "@/i18n";
 import { toastService } from "@/lib/toastService";
 import ConfirmationDialog from "@/shared/components/atoms/confirmation-dialog/ConfirmationDialog";
 import ImageGallery from "@/shared/components/atoms/image-gallery/ImageGallery";
@@ -34,46 +35,50 @@ export function useEmployeeColumns(): ColumnDef<Employee>[] {
 
   return [
     {
-      accessorKey: "full_name_uz",
-      header: t("Full name (uz)"),
-      cell: ({ row }) => <div>{row.getValue("full_name_uz")}</div>,
+      id: "full_name",
+      header: t("Full Name"),
+      cell: ({ row }) => {
+        const employee = row.original;
+        const full_name = localized(employee, "full_name");
+
+        return (
+          <div
+            className="max-w-md truncate font-medium"
+            title={full_name || undefined}
+          >
+            {full_name || (
+              <span className="text-muted-foreground">{t("No full name")}</span>
+            )}
+          </div>
+        );
+      },
     },
     {
-      accessorKey: "full_name_ru",
-      header: t("Full name (ru)"),
-      cell: ({ row }) => <div>{row.getValue("full_name_ru")}</div>,
-    },
-    {
-      accessorKey: "full_name_en",
-      header: t("Full name (en)"),
-      cell: ({ row }) => <div>{row.getValue("full_name_en")}</div>,
-    },
-    {
-      accessorKey: "position_uz",
-      header: t("Position (uz)"),
-      cell: ({ row }) => <div>{row.getValue("position_uz")}</div>,
-    },
-    {
-      accessorKey: "position_ru",
-      header: t("Position (ru)"),
-      cell: ({ row }) => <div>{row.getValue("position_ru")}</div>,
-    },
-    {
-      accessorKey: "position_en",
-      header: t("Position (en)"),
-      cell: ({ row }) => <div>{row.getValue("position_en")}</div>,
+      id: "position",
+      header: t("Position"),
+      cell: ({ row }) => {
+        const employee = row.original;
+        const position = localized(employee, "position");
+
+        return (
+          <div
+            className="max-w-md truncate font-medium"
+            title={position || undefined}
+          >
+            {position || (
+              <span className="text-muted-foreground">{t("No full name")}</span>
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "image",
       header: t("Image"),
-      size: 250,
+      size: 100,
       cell: ({ row }) => {
         const imageUrl = row.getValue("image") as string;
-        return (
-          <div>
-            {imageUrl && <ImageGallery images={[imageUrl]} />}
-          </div>
-        );
+        return <div>{imageUrl && <ImageGallery images={[imageUrl]} />}</div>;
       },
     },
     {
@@ -109,15 +114,6 @@ export function useEmployeeColumns(): ColumnDef<Employee>[] {
       header: t("Action"),
       cell: ({ row }) => (
         <div className="flex gap-2">
-          {/* <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate(`view/${row.getValue("id")}`)}
-            title={t("View")}
-            disabled={isDeleting}
-          >
-            <RiEyeLine className="h-4 w-4" />
-          </Button> */}
           <Button
             variant="outline"
             size="sm"

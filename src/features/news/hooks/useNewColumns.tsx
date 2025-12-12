@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { localized } from "@/i18n";
 import { toastService } from "@/lib/toastService";
 import ConfirmationDialog from "@/shared/components/atoms/confirmation-dialog/ConfirmationDialog";
 import { RiDeleteBinLine, RiEditLine, RiEyeLine } from "@remixicon/react"; // Remix Icon
@@ -33,19 +34,23 @@ export function useNewColumns(): ColumnDef<News>[] {
 
   return [
     {
-      accessorKey: "title_uz",
-      header: t("Title (uz)"),
-      cell: ({ row }) => <div>{row.getValue("title_uz")}</div>,
-    },
-    {
-      accessorKey: "title_ru",
-      header: t("Title (ru)"),
-      cell: ({ row }) => <div>{row.getValue("title_ru")}</div>,
-    },
-    {
-      accessorKey: "title_en",
-      header: t("Title (en)"),
-      cell: ({ row }) => <div>{row.getValue("title_en")}</div>,
+      id: "title",
+      header: t("Title"),
+      cell: ({ row }) => {
+        const news = row.original;
+        const title = localized(news, "title");
+
+        return (
+          <div
+            className="max-w-md truncate font-medium"
+            title={title || undefined}
+          >
+            {title || (
+              <span className="text-muted-foreground">{t("No title")}</span>
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "image",

@@ -1,5 +1,3 @@
-// components/MyEditor.tsx
-import React from "react";
 import {
   FormControl,
   FormDescription,
@@ -8,20 +6,20 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { FieldPath, FieldValues } from "react-hook-form";
-import { FormItemProps } from "@/shared/interfaces/form-item.props";
 import { cn } from "@/lib/utils";
+import { FormItemProps } from "@/shared/interfaces/form-item.props";
 import { get } from "lodash";
+import { FieldPath, FieldValues } from "react-hook-form";
 
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { Editor } from "@tinymce/tinymce-react";
+import { useTranslation } from "react-i18next";
 
 export type MyEditorProps<TFieldValues extends FieldValues> =
   FormItemProps<TFieldValues> & {
     placeholder?: string;
-    height?: string;
+    height?: string | number;
     required?: boolean;
-    disabled?: boolean; // Yangi qo'shildi!
+    disabled?: boolean;
   };
 
 const MyEditor = <TFieldValues extends FieldValues>({
@@ -30,12 +28,14 @@ const MyEditor = <TFieldValues extends FieldValues>({
   label,
   helperText,
   required = false,
-  placeholder = "Matn kiriting...",
-  height = "500px",
-  disabled = false, // Default: yoqilmagan
+  placeholder,
+  height = 500,
+  disabled = false,
   rules,
   floatingError,
 }: MyEditorProps<TFieldValues>) => {
+  const { t } = useTranslation();
+
   const labelElm = label && (
     <FormLabel className="my-3 block">
       {label} {required && <span className="text-red-600">*</span>}
@@ -47,7 +47,7 @@ const MyEditor = <TFieldValues extends FieldValues>({
       <div className="space-y-3">
         {labelElm}
         <div className="border-2 border-dashed rounded-xl p-10 text-center text-muted-foreground">
-          CKEditor faqat form ichida ishlaydi
+          TinyMCE faqat form ichida ishlaydi
         </div>
       </div>
     );
@@ -68,84 +68,70 @@ const MyEditor = <TFieldValues extends FieldValues>({
             <FormControl>
               <div
                 className={cn(
-                  "overflow-hidden shadow-sm transition-all",
-                  error
-                    ? "border-red-500 ring-2 ring-red-500 ring-offset-2"
-                    : "border-input",
+                  "rounded-sm overflow-hidden shadow-sm transition-all",
+                  error && "border-red-500 ring-2 ring-red-500 ring-offset-2",
                   disabled && "opacity-70 bg-gray-50 cursor-not-allowed"
                 )}
-                style={{ "--ck-editor-height": height } as React.CSSProperties}
               >
-                <CKEditor
-                  editor={ClassicEditor}
-                  data={field.value || ""}
-                  disabled={disabled} // CKEditor o'zining disabled rejimi
-                  config={{
-                    placeholder,
-                    toolbar: disabled
-                      ? [] // Agar disabled bo'lsa, toolbar butunlay yo'q
-                      : [
-                          "heading",
-                          "|",
-                          "bold",
-                          "italic",
-                          "underline",
-                          "strikethrough",
-                          "|",
-                          "bulletedList",
-                          "numberedList",
-                          "|",
-                          "outdent",
-                          "indent",
-                          "|",
-                          "link",
-                          "blockquote",
-                          "imageUpload",
-                          "insertTable",
-                          "mediaEmbed",
-                          "|",
-                          "undo",
-                          "redo",
-                        ],
-                    image: {
-                      toolbar: [
-                        "imageStyle:inline",
-                        "imageStyle:block",
-                        "imageStyle:side",
-                        "|",
-                        "toggleImageCaption",
-                        "imageTextAlternative",
-                      ],
+                <Editor
+                  apiKey="hkxyu3n0ax42xpbpl5jdtlyl391vl5m8nwu7y3vgayuxltda" // O'zingizniki bo'lsa almashtiring yoki .env ga qo'ying
+                  value={field.value || ""}
+                  disabled={disabled}
+                  init={{
+                    height,
+                    menubar: true,
+                    placeholder: placeholder || t("Type your text here..."),
+                    branding: false,
+                    resize: true,
+                    content_style:
+                      "body { font-family: inherit; font-size: 14px; }",
+                    plugins: [
+                      "advlist",
+                      "autolink",
+                      "lists",
+                      "link",
+                      "image",
+                      "charmap",
+                      "preview",
+                      "anchor",
+                      "searchreplace",
+                      "visualblocks",
+                      "code",
+                      "fullscreen",
+                      "insertdatetime",
+                      "media",
+                      "table",
+                      "code",
+                      // "help",
+                      // "wordcount",
+                      "emoticons",
+                      "codesample",
+                      "autoresize",
+                      "save",
+                      "directionality",
+                    ],
+                    toolbar:
+                      "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough forecolor backcolor | \
+                      alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | \
+                      link image media table | emoticons charmap | removeformat | code fullscreen",
+                    image_advtab: true,
+                    file_picker_types: "image",
+                    automatic_uploads: true,
+                    images_upload_handler: async (blobInfo) => {
+                      const file = blobInfo.blob();
+                      const base64 = await new Promise<string>((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result as string);
+                        reader.readAsDataURL(file);
+                      });
+                      return base64;
                     },
-                    // Disabled holatda ham rasm yuklashni bloklash
-                    ...(disabled && { readOnly: true }),
+                    // Disabled holatda faqat o'qish rejimi
+                    readonly: disabled,
                   }}
-                  onReady={(editor) => {
+                  onEditorChange={(content) => {
                     if (!disabled) {
-                      // Faqat enabled bo'lganda adapter ishlaydi
-                      editor.plugins.get("FileRepository").createUploadAdapter =
-                        (loader) => {
-                          return {
-                            upload() {
-                              return loader.file.then(
-                                (file) =>
-                                  new Promise((resolve, reject) => {
-                                    const reader = new FileReader();
-                                    reader.onload = () =>
-                                      resolve({ default: reader.result });
-                                    reader.onerror = (error) => reject(error);
-                                    reader.readAsDataURL(file);
-                                  })
-                              );
-                            },
-                            abort() {},
-                          };
-                        };
-                    }
-                  }}
-                  onChange={(_event: any, editor: any) => {
-                    if (!disabled) {
-                      field.onChange(editor.getData());
+                      field.onChange(content);
                     }
                   }}
                 />

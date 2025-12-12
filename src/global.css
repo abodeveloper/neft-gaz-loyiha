@@ -13,15 +13,4 @@ body, html {
   padding: 0;
 }
 
-/* CKEditor ichki maydoniga balandlik */
-.ck-editor__editable {
-  min-height: var(--ck-editor-height, 400px) !important;
-  height: var(--ck-editor-height, 400px) !important;
-}
 
-/* "Powered by CKEditor" ni o'chirish */
-.ck-powered-by,
-.ck-editor__editable .ck-powered-by,
-.ck-powered-by-balloon {
-  display: none !important;
-}

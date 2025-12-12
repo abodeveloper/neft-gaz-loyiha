@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Employee } from "@/features/employees/types";
+import { localized } from "@/i18n";
 import ImageGallery from "@/shared/components/atoms/image-gallery/ImageGallery";
 import { RiEditLine } from "@remixicon/react"; // Remix Icon
 import { ColumnDef } from "@tanstack/react-table";
@@ -13,34 +14,42 @@ export function useEmployeeColumns(): ColumnDef<Employee>[] {
 
   return [
     {
-      accessorKey: "full_name_uz",
-      header: t("Full name (uz)"),
-      cell: ({ row }) => <div>{row.getValue("full_name_uz")}</div>,
+      id: "full_name",
+      header: t("Full Name"),
+      cell: ({ row }) => {
+        const employee = row.original;
+        const full_name = localized(employee, "full_name");
+
+        return (
+          <div
+            className="max-w-md truncate font-medium"
+            title={full_name || undefined}
+          >
+            {full_name || (
+              <span className="text-muted-foreground">{t("No full name")}</span>
+            )}
+          </div>
+        );
+      },
     },
     {
-      accessorKey: "full_name_ru",
-      header: t("Full name (ru)"),
-      cell: ({ row }) => <div>{row.getValue("full_name_ru")}</div>,
-    },
-    {
-      accessorKey: "full_name_en",
-      header: t("Full name (en)"),
-      cell: ({ row }) => <div>{row.getValue("full_name_en")}</div>,
-    },
-    {
-      accessorKey: "position_uz",
-      header: t("Position (uz)"),
-      cell: ({ row }) => <div>{row.getValue("position_uz")}</div>,
-    },
-    {
-      accessorKey: "position_ru",
-      header: t("Position (ru)"),
-      cell: ({ row }) => <div>{row.getValue("position_ru")}</div>,
-    },
-    {
-      accessorKey: "position_en",
-      header: t("Position (en)"),
-      cell: ({ row }) => <div>{row.getValue("position_en")}</div>,
+      id: "position",
+      header: t("Position"),
+      cell: ({ row }) => {
+        const employee = row.original;
+        const position = localized(employee, "position");
+
+        return (
+          <div
+            className="max-w-md truncate font-medium"
+            title={position || undefined}
+          >
+            {position || (
+              <span className="text-muted-foreground">{t("No full name")}</span>
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "image",
