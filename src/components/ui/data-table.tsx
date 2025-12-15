@@ -157,7 +157,7 @@ export function DataTable<TData>({
                     className="h-24 text-center p-0"
                   >
                     <div className="sticky left-0 w-full flex justify-center items-center h-[250px]">
-                      <LoadingSpinner message={t("Loading data ...")} />
+                      <LoadingSpinner message={t("Loading data")} />
                     </div>
                   </TableCell>
                 </TableRow>

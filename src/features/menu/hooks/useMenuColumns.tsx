@@ -82,7 +82,7 @@ export function useMenuColumns(
     },
     {
       accessorKey: "position",
-      header: t("Position"),
+      header: t("Order"),
       cell: ({ row }) => (
         <Badge variant="default">{row.getValue("position")}</Badge>
       ),

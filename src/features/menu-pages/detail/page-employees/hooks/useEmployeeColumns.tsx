@@ -34,7 +34,7 @@ export function useEmployeeColumns(): ColumnDef<Employee>[] {
     },
     {
       id: "position",
-      header: t("Position"),
+      header: t("Order"),
       cell: ({ row }) => {
         const employee = row.original;
         const position = localized(employee, "position");

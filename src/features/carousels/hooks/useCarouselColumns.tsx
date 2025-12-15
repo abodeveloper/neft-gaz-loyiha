@@ -72,7 +72,7 @@ export function useCarouselColumns(): ColumnDef<Carousel>[] {
     },
     {
       accessorKey: "position",
-      header: t("Position"),
+      header: t("Order"),
       cell: ({ row }) => (
         <div>
           <Badge variant="default">{row.getValue("position")}</Badge>

@@ -254,12 +254,12 @@ const MyFileInput = <TFieldValues extends FieldValues>({
                   </div>
                   <div className="text-sm">
                     <span className="font-semibold text-primary/60">
-                      {t("Yuklash uchun bosing yoki faylni shu yerga tashlang")}
+                      {t("Click to upload or drop file here")}
                     </span>
                   </div>
                   {maxSize > 0 && (
                     <p className="text-xs text-muted-foreground">
-                      {t("Maksimal hajm")}: {formatFileSize(maxSize * 1024)}
+                      {t("Maximum file size")}: {formatFileSize(maxSize * 1024)}
                     </p>
                   )}
                 </div>
