@@ -42,7 +42,7 @@ export const useNewForm = ({
       description_en: get(initialData, "description_en", ""),
       type: get(initialData, "type", NewsType.NEWS),
       status: get(initialData, "status", true),
-      upload_images: get(initialData, "images", null),
+      images: get(initialData, "images", []),
     },
   });
 

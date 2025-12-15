@@ -91,6 +91,51 @@ export function useEmployeeColumns(): ColumnDef<Employee>[] {
       ),
     },
     {
+      accessorKey: "phone",
+      header: t("Phone"),
+      cell: ({ row }) => (
+        <div>
+          <Badge variant="secondary">{row.getValue("phone")}</Badge>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "phone",
+      header: t("Phone"),
+      cell: ({ row }) => (
+        <div>
+          <Badge variant="secondary">{row.getValue("phone")}</Badge>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "phone",
+      header: t("Phone"),
+      cell: ({ row }) => (
+        <div>
+          <Badge variant="secondary">{row.getValue("phone")}</Badge>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "phone",
+      header: t("Phone"),
+      cell: ({ row }) => (
+        <div>
+          <Badge variant="secondary">{row.getValue("phone")}</Badge>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "phone",
+      header: t("Phone"),
+      cell: ({ row }) => (
+        <div>
+          <Badge variant="secondary">{row.getValue("phone")}</Badge>
+        </div>
+      ),
+    },
+    {
       accessorKey: "email",
       header: t("Email"),
       cell: ({ row }) => (
@@ -110,7 +155,6 @@ export function useEmployeeColumns(): ColumnDef<Employee>[] {
     },
     {
       accessorKey: "id",
-      size: 100,
       header: t("Action"),
       cell: ({ row }) => (
         <div className="flex gap-2">
@@ -136,7 +180,7 @@ export function useEmployeeColumns(): ColumnDef<Employee>[] {
               </Button>
             }
             title={t("Delete Item")}
-            description={t("Are you sure you want to delete this news item ?")}
+            description={t("Are you sure you want to delete this item ?")}
             onConfirm={() => deleteItem(row.getValue("id"))}
             confirmText={t("Yes, Delete")}
             cancelText={t("No, Cancel")}

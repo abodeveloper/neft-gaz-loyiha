@@ -43,7 +43,7 @@ export function useCarouselColumns(): ColumnDef<Carousel>[] {
 
         return (
           <div
-            className="max-w-md truncate font-medium"
+            className="font-medium"
             title={title || undefined}
           >
             {title || (
@@ -94,7 +94,6 @@ export function useCarouselColumns(): ColumnDef<Carousel>[] {
     },
     {
       accessorKey: "id",
-      size: 100,
       header: t("Action"),
       cell: ({ row }) => (
         <div className="flex gap-2">
@@ -120,7 +119,7 @@ export function useCarouselColumns(): ColumnDef<Carousel>[] {
               </Button>
             }
             title={t("Delete Item")}
-            description={t("Are you sure you want to delete this news item ?")}
+            description={t("Are you sure you want to delete this item ?")}
             onConfirm={() => deleteItem(row.getValue("id"))}
             confirmText={t("Yes, Delete")}
             cancelText={t("No, Cancel")}

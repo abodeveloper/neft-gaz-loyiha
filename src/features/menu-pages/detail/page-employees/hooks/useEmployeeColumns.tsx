@@ -89,7 +89,6 @@ export function useEmployeeColumns(): ColumnDef<Employee>[] {
     },
     {
       accessorKey: "id",
-      size: 100,
       header: t("Action"),
       cell: ({ row }) => (
         <div className="flex gap-2">

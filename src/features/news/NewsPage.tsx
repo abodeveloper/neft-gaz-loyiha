@@ -117,7 +117,7 @@ export default function NewsPage() {
                     <SelectValue placeholder={t("Filter by Type")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">{t("All")}</SelectItem>
+                    {/* <SelectItem value="all">{t("All")}</SelectItem> */}
                     <SelectItem value={NewsType.NEWS}>{t("News")}</SelectItem>
                     <SelectItem value={NewsType.ANNOUNCEMENT}>
                       {t("Announcement")}

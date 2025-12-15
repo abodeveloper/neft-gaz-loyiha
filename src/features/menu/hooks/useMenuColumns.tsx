@@ -48,7 +48,7 @@ export function useMenuColumns(
 
         return (
           <div
-            className="max-w-md truncate font-medium"
+            className="font-medium"
             title={title || undefined}
           >
             {title || (
@@ -99,7 +99,6 @@ export function useMenuColumns(
     },
     {
       accessorKey: "id",
-      size: 140,
       header: t("Action"),
       cell: ({ row }) => {
         const id = row.getValue("id");
@@ -146,7 +145,7 @@ export function useMenuColumns(
                 </Button>
               }
               title={t("Delete Item")}
-              description={t("Are you sure you want to delete this menu item?")}
+              description={t("Are you sure you want to delete this item ?")}
               onConfirm={() => deleteItem(id)}
               confirmText={t("Yes, Delete")}
               cancelText={t("No, Cancel")}

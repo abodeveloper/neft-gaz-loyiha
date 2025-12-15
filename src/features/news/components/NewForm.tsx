@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import BackButton from "@/shared/components/atoms/back-button/BackButton";
 import {
   MyFileInput,
   MyInput,
@@ -7,9 +8,9 @@ import {
   MyTextarea,
 } from "@/shared/components/atoms/form-elements";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useNewForm } from "../hooks/useNewForm";
 import { NewsType } from "../types";
-import BackButton from "@/shared/components/atoms/back-button/BackButton";
 
 interface NewsFormProps {
   mode: "create" | "update";
@@ -19,6 +20,7 @@ interface NewsFormProps {
 
 const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const { form, onSubmit, mutation } = useNewForm({ mode, id, initialData, t });
   const { control, handleSubmit } = form;
@@ -34,7 +36,7 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
   ];
 
   return (
-    <div className="space-y-6 w-full max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-semibold">
           {mode === "create" ? t("Create news") : t("Update news")}
@@ -48,7 +50,6 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
             control={control}
             name="title_uz"
             label={t("Title (uz)")}
-            placeholder={t("Title (uz)")}
             required
           />
 
@@ -56,7 +57,6 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
             control={control}
             name="title_ru"
             label={t("Title (ru)")}
-            placeholder={t("Title (ru)")}
             required
           />
 
@@ -64,7 +64,6 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
             control={control}
             name="title_en"
             label={t("Title (en)")}
-            placeholder={t("Title (en)")}
             required
           />
 
@@ -73,11 +72,10 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
             name="description_uz"
             label={t("Description (uz)")}
             placeholder={t("Enter a description in Uzbek...")}
-            rows={5}
-            maxLength={1000}
-            showCounter
+            rows={10}
+            // maxLength={1000}
+            // showCounter
             required
-            helperText={t("Required field. Maximum 1000 characters.")}
           />
 
           <MyTextarea
@@ -85,11 +83,10 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
             name="description_ru"
             label={t("Description (ru)")}
             placeholder={t("Enter a description in Russian...")}
-            rows={5}
-            maxLength={1000}
-            showCounter
+            rows={10}
+            // maxLength={1000}
+            // showCounter
             required
-            helperText={t("Required field. Maximum 1000 characters.")}
           />
 
           <MyTextarea
@@ -97,11 +94,10 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
             name="description_en"
             label={t("Description (en)")}
             placeholder={t("Enter a description in English...")}
-            rows={5}
-            maxLength={1000}
-            showCounter
+            rows={10}
+            // maxLength={1000}
+            // showCounter
             required
-            helperText={t("Required field. Maximum 1000 characters.")}
           />
 
           {/* Type + Status */}
@@ -126,8 +122,8 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
 
           <MyFileInput
             control={control}
-            name="upload_images"
-            label={t("Image")}
+            name="images"
+            label={t("Images")}
             accept="image/*"
             maxSize={5120}
             helperText={t("JPG, PNG, WEBP. Maksimal 5MB")}
@@ -135,30 +131,25 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
             multiple={true}
           />
 
-          {/* Joriy rasm */}
-          {/* {initialData?.image &&
-            typeof initialData.image === "string" &&
-            !form.getValues().image && (
-              <div className="mt-4">
-                <p className="text-sm font-medium mb-2">
-                  {t("Current image")}:
-                </p>
-                <img
-                  src={initialData.image}
-                  alt={t("Current image")}
-                  className="h-40 w-40 object-cover rounded-lg border"
-                />
-              </div>
-            )} */}
-
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={mutation.isPending}
-            loading={mutation.isPending}
-          >
-            {mode === "create" ? t("Create") : t("Update")}
-          </Button>
+          <div className="flex justify-end gap-3">
+            <Button
+              variant={"outline"}
+              type="button"
+              className="w-44"
+              disabled={mutation.isPending}
+              onClick={() => navigate(-1)}
+            >
+              {t("Cancel")}
+            </Button>
+            <Button
+              type="submit"
+              className="w-44"
+              disabled={mutation.isPending}
+              loading={mutation.isPending}
+            >
+              {mode === "create" ? t("Create") : t("Update")}
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

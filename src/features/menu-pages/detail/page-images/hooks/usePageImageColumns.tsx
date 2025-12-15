@@ -69,7 +69,7 @@ export function usePageImageColumns(): ColumnDef<PageImage>[] {
               </Button>
             }
             title={t("Delete Item")}
-            description={t("Are you sure you want to delete this news item ?")}
+            description={t("Are you sure you want to delete this item ?")}
             onConfirm={() => deleteItem(row.getValue("id"))}
             confirmText={t("Yes, Delete")}
             cancelText={t("No, Cancel")}

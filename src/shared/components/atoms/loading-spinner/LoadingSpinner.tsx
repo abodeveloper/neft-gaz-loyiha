@@ -21,7 +21,7 @@ const LoadingSpinner = ({
       )}
     >
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      <p className="text-lg text-muted-foreground">{message || t("Loading")}</p>
+      <p className="text-lg text-muted-foreground">{message || t("Loading")}...</p>
     </div>
   );
 };

@@ -10,18 +10,25 @@ import {
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import {
-  Upload,
-  X,
+  FileAudio,
   FileIcon,
-  Image,
   FileText,
   FileVideo,
-  FileAudio,
+  Image as ImageIcon,
+  Upload,
+  X,
 } from "lucide-react";
 import { useRef, useState } from "react";
 import { FieldPath, FieldValues } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+// Backenddan keladigan eski fayl tuzilishi
+export interface ExistingFile {
+  id: number;
+  image: string;
+}
+
+// Komponent propslari
 export type MyFileInputProps<TFieldValues extends FieldValues = FieldValues> = {
   control: any;
   name: FieldPath<TFieldValues>;
@@ -35,15 +42,17 @@ export type MyFileInputProps<TFieldValues extends FieldValues = FieldValues> = {
   disabled?: boolean;
 };
 
+// Yordamchi type: Fayl, String (url) yoki Backend Obyekti bo'lishi mumkin
+type FileItem = File | string | ExistingFile;
+
 const MyFileInput = <TFieldValues extends FieldValues>({
   control,
   name,
   label,
   helperText,
-  placeholder = "Click or drag to upload file",
   accept = "*",
   multiple = false,
-  maxSize = 10240, // 10MB
+  maxSize = 10240, // 10MB default
   required = false,
   disabled = false,
 }: MyFileInputProps<TFieldValues>) => {
@@ -51,8 +60,10 @@ const MyFileInput = <TFieldValues extends FieldValues>({
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const API_URL = import.meta.env.VITE_API_URL;
-  const UPLOADS_URL = import.meta.env.VITE_UPLOADS_URL || `${API_URL}/`;
+  // URL sozlamalari (.env faylga qarab o'zgartiring)
+  const API_URL = import.meta.env.VITE_API_URL || "";
+  // Agar backend to'liq URL bermasa, base url ni qo'shish uchun:
+  const UPLOADS_URL = import.meta.env.VITE_UPLOADS_URL || API_URL;
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return "0 B";
@@ -64,40 +75,65 @@ const MyFileInput = <TFieldValues extends FieldValues>({
 
   const validateFile = (file: File): string | null => {
     if (maxSize && file.size > maxSize * 1024) {
-      return `${t("File size must not exceed")} ${formatFileSize(
+      return `${t("Fayl hajmi cheklovdan oshdi")}: ${formatFileSize(
         maxSize * 1024
       )}`;
     }
     return null;
   };
 
-  const getFileIcon = (file: File) => {
-    const type = file.type;
-    if (type.startsWith("image/")) return <Image className="w-6 h-6" />;
-    if (type.startsWith("video/")) return <FileVideo className="w-6 h-6" />;
-    if (type.startsWith("audio/")) return <FileAudio className="w-6 h-6" />;
-    if (type.includes("pdf") || type.includes("document"))
-      return <FileText className="w-6 h-6" />;
-    return <FileIcon className="w-6 h-6" />;
+  const isImageFile = (item: FileItem) => {
+    if (item instanceof File) return item.type.startsWith("image/");
+    const url =
+      typeof item === "string" ? item : (item as ExistingFile)?.image || "";
+    return /\.(jpe?g|png|gif|webp|svg|bmp)$/i.test(url);
   };
 
-  const isImageFile = (file: File | string) => {
-    if (file instanceof File) return file.type.startsWith("image/");
-    return /\.(jpe?g|png|gif|webp|svg)$/i.test(file);
-  };
-
-  const getPreviewUrl = (item: File | string) => {
+  const getPreviewUrl = (item: FileItem) => {
     if (item instanceof File) {
       return isImageFile(item) ? URL.createObjectURL(item) : null;
     }
-    const filename = typeof item === "string" ? item : "";
-    return filename.startsWith("http")
-      ? filename
-      : `${UPLOADS_URL}${filename.replace(/^\/+/, "")}`;
+
+    // String yoki Object dan URL ni ajratib olish
+    let url = typeof item === "string" ? item : (item as ExistingFile)?.image;
+
+    if (!url) return null;
+
+    // Agar to'liq http bo'lsa o'zi, bo'lmasa domen qo'shamiz
+    if (url.startsWith("http") || url.startsWith("blob")) {
+      return url;
+    }
+    // URL boshidagi slashlarni tozalash
+    return `${UPLOADS_URL}/${url.replace(/^\/+/, "")}`;
   };
 
-  const getFileName = (item: File | string) => {
-    return item instanceof File ? item.name : item.split("/").pop() || "file";
+  const getFileName = (item: FileItem) => {
+    if (item instanceof File) return item.name;
+    const url =
+      typeof item === "string" ? item : (item as ExistingFile)?.image || "";
+    // URL dan fayl nomini qirqib olish
+    return url.split("/").pop()?.split("?")[0] || "file";
+  };
+
+  const getFileIcon = (item: FileItem) => {
+    if (isImageFile(item)) return <ImageIcon className="w-6 h-6" />;
+
+    // Agar File bo'lsa type orqali aniqlaymiz
+    if (item instanceof File) {
+      if (item.type.startsWith("video/"))
+        return <FileVideo className="w-6 h-6" />;
+      if (item.type.startsWith("audio/"))
+        return <FileAudio className="w-6 h-6" />;
+      if (item.type.includes("pdf")) return <FileText className="w-6 h-6" />;
+    }
+
+    // Agar URL bo'lsa kengaytma orqali taxmin qilamiz
+    const name = getFileName(item).toLowerCase();
+    if (name.endsWith(".pdf")) return <FileText className="w-6 h-6" />;
+    if (name.match(/\.(mp4|mov|avi)$/))
+      return <FileVideo className="w-6 h-6" />;
+
+    return <FileIcon className="w-6 h-6" />;
   };
 
   return (
@@ -106,86 +142,81 @@ const MyFileInput = <TFieldValues extends FieldValues>({
       name={name}
       rules={{
         validate: (value) => {
+          // 1. Required tekshiruvi
           if (required) {
-            if (multiple) {
-              const hasFiles =
-                Array.isArray(value) &&
-                value.some((v) => v instanceof File || typeof v === "string");
-              if (!hasFiles) return t("At least one file is required");
-            } else {
-              if (!value) return t("File is required");
-            }
+            const isEmpty =
+              !value || (Array.isArray(value) && value.length === 0);
+            if (isEmpty) return t("Fayl yuklash majburiy");
           }
 
-          if (value instanceof File) {
+          // 2. Hajm tekshiruvi (faqat yangi File lar uchun)
+          if (Array.isArray(value)) {
+            for (const item of value) {
+              if (item instanceof File) {
+                const error = validateFile(item);
+                if (error) return error;
+              }
+            }
+          } else if (value instanceof File) {
             const error = validateFile(value);
             if (error) return error;
           }
 
-          if (multiple && Array.isArray(value)) {
-            for (const file of value) {
-              if (file instanceof File) {
-                const error = validateFile(file);
-                if (error) return error;
-              }
-            }
-          }
           return true;
         },
       }}
       render={({ field }) => {
-        const value = field.value;
+        // Qiymatni massivga aylantiramiz
+        let items: FileItem[] = [];
 
-        // Qiymatni normalizatsiya qilamiz: string | File | (string|File)[]
-        let items: (File | string)[] = [];
-
-        if (multiple) {
-          if (Array.isArray(value)) {
-            items = value.filter(
-              (item) => item instanceof File || typeof item === "string"
-            );
-          } else if (value) {
-            items = [value];
-          }
-        } else {
-          if (value instanceof File || typeof value === "string") {
-            items = [value];
-          }
+        if (Array.isArray(field.value)) {
+          items = field.value;
+        } else if (field.value) {
+          items = [field.value];
         }
 
-        const addFiles = (newFiles: File[]) => {
+        const handleAddFiles = (newFiles: File[]) => {
           if (multiple) {
+            // Eskilar + Yangilar
             field.onChange([...items, ...newFiles]);
-          } else if (newFiles[0]) {
+          } else {
+            // Faqat yangisi (bittalik rejimda)
             field.onChange(newFiles[0]);
           }
         };
 
-        const removeItem = (index: number) => {
-          const updated = items.filter((_, i) => i !== index);
-          field.onChange(
-            multiple ? (updated.length ? updated : []) : updated[0] || null
+        const handleRemoveItem = (indexToRemove: number) => {
+          const updatedItems = items.filter(
+            (_, index) => index !== indexToRemove
           );
+
+          if (multiple) {
+            field.onChange(updatedItems);
+          } else {
+            field.onChange(null);
+          }
+
+          // Input value reset
           if (inputRef.current) inputRef.current.value = "";
         };
 
         return (
-          <FormItem>
+          <FormItem className="space-y-2">
             {label && (
-              <FormLabel className="my-3 flex items-center gap-1">
-                {label} {required && <span className="text-red-600">*</span>}
+              <FormLabel className="flex items-center gap-1">
+                {label} {required && <span className="text-red-500">*</span>}
               </FormLabel>
             )}
 
             <FormControl>
               <div className="space-y-4">
-                {/* Upload Zone */}
+                {/* --- UPLOAD AREA --- */}
                 <div
                   className={cn(
-                    "relative border-2 border-dashed rounded-lg p-8 transition-all text-center",
+                    "relative border-2 border-dashed rounded-lg p-6 transition-all text-center flex flex-col items-center justify-center gap-2",
                     dragActive
                       ? "border-primary bg-primary/5"
-                      : "border-muted-foreground/25",
+                      : "border-muted-foreground/25 hover:border-primary/50",
                     disabled && "opacity-50 cursor-not-allowed"
                   )}
                   onDragOver={(e) => {
@@ -200,7 +231,7 @@ const MyFileInput = <TFieldValues extends FieldValues>({
                     e.preventDefault();
                     setDragActive(false);
                     if (disabled || !e.dataTransfer.files.length) return;
-                    addFiles(Array.from(e.dataTransfer.files));
+                    handleAddFiles(Array.from(e.dataTransfer.files));
                   }}
                 >
                   <input
@@ -209,89 +240,91 @@ const MyFileInput = <TFieldValues extends FieldValues>({
                     accept={accept}
                     multiple={multiple}
                     disabled={disabled}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
                     onChange={(e) => {
                       if (e.target.files?.length) {
-                        addFiles(Array.from(e.target.files));
-                        e.target.value = "";
+                        handleAddFiles(Array.from(e.target.files));
+                        e.target.value = ""; // Reset input
                       }
                     }}
                   />
 
-                  <Upload
-                    className={cn(
-                      "w-12 h-12 mx-auto mb-3",
-                      dragActive ? "text-primary" : "text-muted-foreground"
-                    )}
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    {t(placeholder)}
-                  </p>
+                  <div className="p-3 bg-muted rounded-full">
+                    <Upload className="w-6 h-6 text-muted-foreground" />
+                  </div>
+                  <div className="text-sm">
+                    <span className="font-semibold text-primary/60">
+                      {t("Yuklash uchun bosing yoki faylni shu yerga tashlang")}
+                    </span>
+                  </div>
                   {maxSize > 0 && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {t("Max size")}: {formatFileSize(maxSize * 1024)}
+                    <p className="text-xs text-muted-foreground">
+                      {t("Maksimal hajm")}: {formatFileSize(maxSize * 1024)}
                     </p>
                   )}
                 </div>
 
-                {/* Fayllar roʻyxati */}
+                {/* --- FILE LIST --- */}
                 {items.length > 0 && (
-                  <div className="space-y-3">
+                  <div className="grid gap-2">
                     {items.map((item, index) => {
-                      const isUrl = typeof item === "string";
-                      const fileName = getFileName(item);
+                      const isNewFile = item instanceof File;
                       const previewUrl = getPreviewUrl(item);
+                      const fileName = getFileName(item);
                       const isImg = isImageFile(item);
 
                       return (
                         <div
                           key={index}
-                          className="flex items-center justify-between p-4 bg-muted rounded-lg hover:bg-muted/80 transition"
+                          className="relative flex items-center gap-3 p-3 border rounded-lg bg-card hover:bg-accent/50 transition-colors group"
                         >
-                          <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 rounded overflow-hidden border bg-background flex-shrink-0">
-                              {isImg && previewUrl ? (
-                                <img
-                                  src={previewUrl}
-                                  alt={fileName}
-                                  className="w-full h-full object-cover"
-                                  onLoad={() =>
-                                    item instanceof File &&
-                                    URL.revokeObjectURL(previewUrl)
+                          {/* Preview / Icon */}
+                          <div className="h-12 w-12 rounded-md overflow-hidden bg-muted flex items-center justify-center border shrink-0">
+                            {isImg && previewUrl ? (
+                              <img
+                                src={previewUrl}
+                                alt={fileName}
+                                className="h-full w-full object-cover"
+                                onLoad={() => {
+                                  // Xotirani tozalash faqat blob url uchun
+                                  if (
+                                    isNewFile &&
+                                    previewUrl.startsWith("blob:")
+                                  ) {
+                                    // React strict mode da darrov revoke qilmang, bu shart emas
                                   }
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center">
-                                  {isUrl ? (
-                                    <FileIcon className="w-8 h-8 text-muted-foreground" />
-                                  ) : (
-                                    getFileIcon(item as File)
-                                  )}
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="min-w-0">
-                              <p className="text-sm font-medium truncate max-w-xs">
-                                {fileName}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {isUrl
-                                  ? t("Already uploaded")
-                                  : formatFileSize((item as File).size)}
-                              </p>
-                            </div>
+                                }}
+                              />
+                            ) : (
+                              getFileIcon(item)
+                            )}
                           </div>
 
+                          {/* Info */}
+                          <div className="flex-1 min-w-0">
+                            <p
+                              className="text-sm font-medium truncate"
+                              title={fileName}
+                            >
+                              {fileName}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {isNewFile
+                                ? formatFileSize(item.size)
+                                : t("File on the server")}
+                            </p>
+                          </div>
+
+                          {/* Delete Button */}
                           {!disabled && (
                             <Button
                               type="button"
                               variant="ghost"
                               size="icon"
-                              className="h-9 w-9"
-                              onClick={() => removeItem(index)}
+                              className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                              onClick={() => handleRemoveItem(index)}
                             >
-                              <X className="h-5 w-5" />
+                              <X className="h-4 w-4" />
                             </Button>
                           )}
                         </div>

@@ -13,7 +13,7 @@ export default function Layout() {
       <AppSidebar />
       <SidebarInset>
         <SiteHeader />
-        <div className="p-4 h-screen">
+        <div className="p-4 pb-[40px] min-h-screen">
           <Outlet />
         </div>
       </SidebarInset>

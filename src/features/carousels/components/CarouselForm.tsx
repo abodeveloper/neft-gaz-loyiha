@@ -8,6 +8,7 @@ import {
   MyTextarea,
 } from "@/shared/components/atoms/form-elements";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useCarouselForm } from "../hooks/useCarouselForm";
 
 interface FormProps {
@@ -19,6 +20,8 @@ interface FormProps {
 const CarouselForm = ({ mode, id, initialData }: FormProps) => {
   const { t } = useTranslation();
 
+  const navigate = useNavigate();
+
   const { form, onSubmit, mutation } = useCarouselForm({
     mode,
     id,
@@ -29,12 +32,12 @@ const CarouselForm = ({ mode, id, initialData }: FormProps) => {
   const { control, handleSubmit } = form;
 
   const statusOptions = [
-    { value: "true", label: t("Active") },
-    { value: "false", label: t("Inactive") },
+    { value: true, label: t("Active") },
+    { value: false, label: t("Inactive") },
   ];
 
   return (
-    <div className="space-y-6 w-full max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-semibold">
           {mode === "create" ? t("Create carousel") : t("Update carousel")}
@@ -48,7 +51,6 @@ const CarouselForm = ({ mode, id, initialData }: FormProps) => {
             control={control}
             name="title_uz"
             label={t("Title (uz)")}
-            placeholder={t("Title (uz)")}
             required
           />
 
@@ -56,7 +58,6 @@ const CarouselForm = ({ mode, id, initialData }: FormProps) => {
             control={control}
             name="title_ru"
             label={t("Title (ru)")}
-            placeholder={t("Title (ru)")}
             required
           />
 
@@ -64,7 +65,6 @@ const CarouselForm = ({ mode, id, initialData }: FormProps) => {
             control={control}
             name="title_en"
             label={t("Title (en)")}
-            placeholder={t("Title (en)")}
             required
           />
 
@@ -74,10 +74,7 @@ const CarouselForm = ({ mode, id, initialData }: FormProps) => {
             label={t("Description (uz)")}
             placeholder={t("Enter a description in Uzbek...")}
             rows={5}
-            maxLength={1000}
-            showCounter
             required
-            helperText={t("Required field. Maximum 1000 characters.")}
           />
 
           <MyTextarea
@@ -86,10 +83,7 @@ const CarouselForm = ({ mode, id, initialData }: FormProps) => {
             label={t("Description (ru)")}
             placeholder={t("Enter a description in Russian...")}
             rows={5}
-            maxLength={1000}
-            showCounter
             required
-            helperText={t("Required field. Maximum 1000 characters.")}
           />
 
           <MyTextarea
@@ -98,17 +92,13 @@ const CarouselForm = ({ mode, id, initialData }: FormProps) => {
             label={t("Description (en)")}
             placeholder={t("Enter a description in English...")}
             rows={5}
-            maxLength={1000}
-            showCounter
             required
-            helperText={t("Required field. Maximum 1000 characters.")}
           />
 
           <MyInput
             control={control}
             name="link"
             label={t("Link")}
-            placeholder={t("Link")}
             required
           />
 
@@ -126,8 +116,8 @@ const CarouselForm = ({ mode, id, initialData }: FormProps) => {
               control={control}
               name="position"
               type="number"
+              min={1}
               label={t("Position")}
-              placeholder={t("Position")}
               required
             />
           </div>
@@ -142,30 +132,25 @@ const CarouselForm = ({ mode, id, initialData }: FormProps) => {
             required={mode === "create"}
           />
 
-          {/* Joriy rasm */}
-          {initialData?.image &&
-            typeof initialData.image === "string" &&
-            !form.getValues().image && (
-              <div className="mt-4">
-                <p className="text-sm font-medium mb-2">
-                  {t("Current image")}:
-                </p>
-                <img
-                  src={initialData.image}
-                  alt={t("Current image")}
-                  className="h-40 w-40 object-cover rounded-lg border"
-                />
-              </div>
-            )}
-
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={mutation.isPending}
-            loading={mutation.isPending}
-          >
-            {mode === "create" ? t("Create") : t("Update")}
-          </Button>
+          <div className="flex justify-end gap-3">
+            <Button
+              variant={"outline"}
+              type="button"
+              className="w-44"
+              disabled={mutation.isPending}
+              onClick={() => navigate(-1)}
+            >
+              {t("Cancel")}
+            </Button>
+            <Button
+              type="submit"
+              className="w-44"
+              disabled={mutation.isPending}
+              loading={mutation.isPending}
+            >
+              {mode === "create" ? t("Create") : t("Update")}
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

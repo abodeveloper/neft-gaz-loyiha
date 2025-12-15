@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 export type MyEditorProps<TFieldValues extends FieldValues> =
   FormItemProps<TFieldValues> & {
     placeholder?: string;
-    height?: string | number;
+    height?: number;
     required?: boolean;
     disabled?: boolean;
   };
@@ -78,7 +78,8 @@ const MyEditor = <TFieldValues extends FieldValues>({
                   value={field.value || ""}
                   disabled={disabled}
                   init={{
-                    height,
+                    min_height: height, // Minimal balandlik
+                    // autoresize_bottom_margin: 20,
                     menubar: true,
                     placeholder: placeholder || t("Type your text here..."),
                     branding: false,

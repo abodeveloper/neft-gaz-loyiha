@@ -17,7 +17,6 @@ export function useMenuColumns(): ColumnDef<MenuPage>[] {
       header: t("Menu"),
       cell: ({ row }) => {
         const menu = row.getValue("menu");
-
         return <div>{get(menu, "title_uz")}</div>;
       },
     },
@@ -40,7 +39,6 @@ export function useMenuColumns(): ColumnDef<MenuPage>[] {
     },
     {
       accessorKey: "id",
-      size: 40,
       header: t("Action"),
       cell: ({ row }) => {
         const id = row.getValue("id");
@@ -56,16 +54,6 @@ export function useMenuColumns(): ColumnDef<MenuPage>[] {
             >
               <RiEyeLine className="h-4 w-4" />
             </Button>
-
-            {/* <Button
-              variant="outline"
-              size="icon"
-              onClick={() => navigate(`/dashboard/menus/update/${id}`)}
-              title={t("Edit")}
-              className="h-8 w-8"
-            >
-              <RiEditLine className="h-4 w-4" />
-            </Button> */}
           </div>
         );
       },

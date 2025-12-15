@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { localized } from "@/i18n";
 import { toastService } from "@/lib/toastService";
 import ConfirmationDialog from "@/shared/components/atoms/confirmation-dialog/ConfirmationDialog";
+import ImageGallery from "@/shared/components/atoms/image-gallery/ImageGallery";
 import { RiDeleteBinLine, RiEditLine, RiEyeLine } from "@remixicon/react"; // Remix Icon
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
@@ -36,13 +37,14 @@ export function useNewColumns(): ColumnDef<News>[] {
     {
       id: "title",
       header: t("Title"),
+      size: 300,
       cell: ({ row }) => {
         const news = row.original;
         const title = localized(news, "title");
 
         return (
           <div
-            className="max-w-md truncate font-medium"
+            className="font-medium"
             title={title || undefined}
           >
             {title || (
@@ -57,19 +59,7 @@ export function useNewColumns(): ColumnDef<News>[] {
       header: t("Image"),
       cell: ({ row }) => {
         const imageUrl = row.getValue("image") as string;
-        return (
-          <div>
-            {imageUrl ? (
-              <img
-                src={imageUrl}
-                alt="News"
-                className="w-20 rounded-md object-cover"
-              />
-            ) : (
-              <div className="w-20 h-12 rounded-md bg-muted" />
-            )}
-          </div>
-        );
+        return <div>{imageUrl && <ImageGallery images={[imageUrl]} />}</div>;
       },
     },
     {
@@ -100,7 +90,6 @@ export function useNewColumns(): ColumnDef<News>[] {
     },
     {
       accessorKey: "id",
-      size: 100,
       header: t("Action"),
       cell: ({ row }) => (
         <div className="flex gap-2">
@@ -135,7 +124,7 @@ export function useNewColumns(): ColumnDef<News>[] {
               </Button>
             }
             title={t("Delete Item")}
-            description={t("Are you sure you want to delete this news item ?")}
+            description={t("Are you sure you want to delete this item ?")}
             onConfirm={() => deleteItem(row.getValue("id"))}
             confirmText={t("Yes, Delete")}
             cancelText={t("No, Cancel")}

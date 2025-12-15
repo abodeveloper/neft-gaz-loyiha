@@ -3,6 +3,10 @@ import { NewsType } from "../types";
 
 const IMAGE_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
+// 1-QADAM: Enum qiymatlarini Zod tushunadigan formatga (massivga) o'giramiz
+// 'as [string, ...string[]]' bu Zodga massiv bo'sh emasligini bildirish uchun kerak
+const newsTypeValues = Object.values(NewsType) as [string, ...string[]];
+
 // Factory funksiya
 export const createNewSchema = (t: (key: string) => string) =>
   z.object({
@@ -21,19 +25,20 @@ export const createNewSchema = (t: (key: string) => string) =>
 
     description_uz: z
       .string()
-      .min(1, { message: t("Required field") })
-      .max(1000, { message: t("Description must be at most 1000 characters") }),
+      .min(1, { message: t("Required field") }),
     description_ru: z
       .string()
-      .min(1, { message: t("Required field") })
-      .max(1000, { message: t("Description must be at most 1000 characters") }),
+      .min(1, { message: t("Required field") }),
     description_en: z
       .string()
-      .min(1, { message: t("Required field") })
-      .max(1000, { message: t("Description must be at most 1000 characters") }),
+      .min(1, { message: t("Required field") }),
 
     // TYPE
-    type: z.nativeEnum(NewsType, {
+    // type: z.enum(NewsType, {
+    //   errorMap: () => ({ message: t("Required field") }),
+    // }),
+
+    type: z.enum(newsTypeValues, {
       message: t("Required field"),
     }),
 
@@ -41,21 +46,29 @@ export const createNewSchema = (t: (key: string) => string) =>
     status: z.boolean().default(true),
 
     // ARRAY OF IMAGES
-    upload_images: z
+    images: z
       .array(
         z.union([
-          z
-            .instanceof(File)
-            .refine((file) => IMAGE_MIME_TYPES.includes(file.type), {
-              message: t("Only JPG, PNG, WEBP files are allowed"),
-            }),
-          z.string().url(),
-          z.null(),
+          // 1. Yangi yuklangan fayl (File)
+          z.instanceof(File).refine(
+            (file) => IMAGE_MIME_TYPES.includes(file.type),
+            { message: t("Only JPG, PNG, WEBP files are allowed") }
+          ),
+
+          // 2. Serverdan kelgan ESKI fayl ({ id, image })
+          z.object({
+            id: z.number().or(z.string()), // Ba'zan id string kelishi mumkin, ehtiyot shart
+            image: z.string(),
+          }),
+
+          // 3. Shunchaki URL string (agar backenddan shunday kelsa)
+          z.string(),
         ])
       )
-      .min(1, { message: t("At least one image is required") })
+      // Agar rasm majburiy bo'lsa, pastdagi qatorni oching:
+      // .min(1, { message: t("At least one image is required") })
       .optional()
-      .nullable(),
+      .default([]), // Null yoki undefined bo'lmasligi uchun bo'sh massivga o'zgartirdik
   });
 
 // DTO tipi
