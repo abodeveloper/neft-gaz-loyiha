@@ -147,7 +147,7 @@ const MenuForm = ({
               name="position"
               type="number"
               min={1}
-              label={t("Position")}
+              label={t("Order")}
               required
             />
           </div>

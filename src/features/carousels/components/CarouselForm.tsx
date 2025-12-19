@@ -117,7 +117,7 @@ const CarouselForm = ({ mode, id, initialData }: FormProps) => {
               name="position"
               type="number"
               min={1}
-              label={t("Position")}
+              label={t("Order")}
               required
             />
           </div>
