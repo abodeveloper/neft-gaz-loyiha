@@ -67,10 +67,14 @@ export const createEmployee = async (data: EmployeeDto) => {
   if (data.order) formData.append("order", data.order);
 
   if (data.pages && data.pages.length > 0) {
-    // formData.append("pages", data.pages);
+
+    const pages = data.pages.map((item) =>
+      typeof item === "string" ? Number(item) : item
+    );
+
     formData.append(
       "pages",
-      data.pages.map((item) => Number(item))
+      pages as unknown as string
     );
   }
 
@@ -145,10 +149,9 @@ export const updateEmployeee = async (
   if (data.order) formData.append("order", data.order);
 
   if (data.pages && data.pages.length > 0) {
-    // formData.append("pages", data.pages);
     formData.append(
       "pages",
-      data.pages.map((item) => Number(item))
+      data.pages.map((item) => Number(item)) as unknown as string
     );
   }
 

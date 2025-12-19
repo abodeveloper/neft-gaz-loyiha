@@ -2,7 +2,7 @@ import { toastService } from "@/lib/toastService";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { get } from "lodash";
+import { get, omit } from "lodash";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { createEmployee, updateEmployeee } from "../api/employees";
@@ -68,7 +68,20 @@ export const useEmployeeForm = ({
   });
 
   const onSubmit = async (data: EmployeeDto) => {
-    await mutation.mutateAsync(data);
+    let payload: any = { ...data };
+
+    if (mode === "update" && initialData) {
+      const initialImage = get(initialData, "image");
+
+      // Agar formadagi rasm initialData dagi rasm bilan bir xil bo'lsa (ya'ni o'zgarmagan bo'lsa)
+      // Odatda string (URL) bo'lib qolgan bo'ladi
+      if (data.image === initialImage) {
+        // image poliyasini payload dan olib tashlaymiz
+        payload = omit(payload, ["image"]);
+      }
+    }
+
+    await mutation.mutateAsync(payload);
   };
 
   return { form, onSubmit, mutation };

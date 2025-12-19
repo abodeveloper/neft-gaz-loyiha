@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { PageFileDto } from "../../page-files/schemas/createPageFileSchema";
+import { PageImageDto } from "../schemas/createPageImageSchema";
 
 export const getPageImagesData = async (pageId?: string, search?: string) => {
   let url = `/menu/page-images/?page=${pageId}`;
@@ -23,7 +23,7 @@ export const deletePageImage = async (id: number) => {
   return response.data;
 };
 
-export const createPageImage = async (data: PageFileDto) => {
+export const createPageImage = async (data: PageImageDto) => {
   const formData = new FormData();
   if (data.page) formData.append("page", data.page);
   if (data.image instanceof File) {
@@ -36,7 +36,7 @@ export const createPageImage = async (data: PageFileDto) => {
   return response.data;
 };
 
-export const updatePageImages = async (id: number, data: Partial<PageFileDto>) => {
+export const updatePageImages = async (id: number, data: Partial<PageImageDto>) => {
   // Agar rasm File bo‘lmasa (ya’ni allaqachon mavjud bo‘lsa yoki string bo‘lsa)
   // u holda JSON orqali yuboramiz
   if (!(data.image instanceof File)) {

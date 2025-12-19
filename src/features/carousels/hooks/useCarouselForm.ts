@@ -2,14 +2,14 @@ import { toastService } from "@/lib/toastService";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { get } from "lodash";
+import { get, omit } from "lodash"; // omit ni import qildik
 import { useForm, UseFormReturn } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { createCarousel, updateCarousel } from "../api/carousels";
 import {
-  createCarouselSchema,
   CarouselDto,
+  createCarouselSchema,
 } from "../schemas/createCarouselSchema";
-import { useNavigate } from "react-router-dom";
 
 interface UseFormProps {
   mode: "create" | "update";
@@ -29,12 +29,11 @@ export const useCarouselForm = ({
   mutation: ReturnType<typeof useMutation<any, AxiosError, CarouselDto>>;
 } => {
   const navigate = useNavigate();
-
   const queryClient = useQueryClient();
 
   const form = useForm<CarouselDto, undefined, CarouselDto>({
     //@ts-ignore
-    resolver: zodResolver(createCarouselSchema(t)), // t uzatiladi
+    resolver: zodResolver(createCarouselSchema(t)),
     defaultValues: {
       title_uz: get(initialData, "title_uz", ""),
       title_ru: get(initialData, "title_ru", ""),
@@ -49,9 +48,13 @@ export const useCarouselForm = ({
     },
   });
 
-  const mutation = useMutation<unknown, AxiosError, CarouselDto>({
-    mutationFn: (data: CarouselDto) =>
-      mode === "create" ? createCarousel(data) : updateCarousel(id!, data),
+  const mutation = useMutation<unknown, AxiosError, any>({ // Generic turini any yoki Partial ga o'zgartirish maqsadga muvofiq
+    // XATOLIK TUZATILDI: muateteFn -> mutationFn
+    mutationFn: (data: CarouselDto) => {
+      return mode === "create"
+        ? createCarousel(data)
+        : updateCarousel(id!, data);
+    },
     onSuccess: () => {
       toastService.success(t("Saved successfully"));
       navigate("/dashboard/carousels");
@@ -64,7 +67,20 @@ export const useCarouselForm = ({
   });
 
   const onSubmit = async (data: CarouselDto) => {
-    await mutation.mutateAsync(data);
+    let payload: any = { ...data };
+
+    if (mode === "update" && initialData) {
+      const initialImage = get(initialData, "image");
+
+      // Agar formadagi rasm initialData dagi rasm bilan bir xil bo'lsa (ya'ni o'zgarmagan bo'lsa)
+      // Odatda string (URL) bo'lib qolgan bo'ladi
+      if (data.image === initialImage) {
+        // image poliyasini payload dan olib tashlaymiz
+        payload = omit(payload, ["image"]);
+      }
+    }
+
+    await mutation.mutateAsync(payload);
   };
 
   return { form, onSubmit, mutation };

@@ -42,12 +42,28 @@ export function useCarouselColumns(): ColumnDef<Carousel>[] {
         const title = localized(news, "title");
 
         return (
-          <div
-            className="font-medium"
-            title={title || undefined}
-          >
+          <div className="font-medium" title={title || undefined}>
             {title || (
               <span className="text-muted-foreground">{t("No title")}</span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      id: "description",
+      header: t("Description"),
+      size: 400,
+      cell: ({ row }) => {
+        const item = row.original;
+        const description = localized(item, "description");
+
+        return (
+          <div className="text-sm font-light" title={description || undefined}>
+            {description || (
+              <span className="text-muted-foreground">
+                {t("No description")}
+              </span>
             )}
           </div>
         );
@@ -65,11 +81,17 @@ export function useCarouselColumns(): ColumnDef<Carousel>[] {
       accessorKey: "link",
       header: t("Link"),
       cell: ({ row }) => (
-        <div>
+        <a
+          href={row.getValue("link")}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="cursor-pointer"
+        >
           <Badge variant="secondary">{row.getValue("link")}</Badge>
-        </div>
+        </a>
       ),
     },
+
     {
       accessorKey: "position",
       header: t("Order"),

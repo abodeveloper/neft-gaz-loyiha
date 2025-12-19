@@ -2,7 +2,7 @@ import { toastService } from "@/lib/toastService";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { get } from "lodash";
+import { get, omit } from "lodash";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { createPageFile, updatePageFile } from "../api/page-file";
@@ -63,7 +63,15 @@ export const usePageFileForm = ({
   });
 
   const onSubmit = async (data: PageFileDto) => {
-    await mutation.mutateAsync(data);
+    let payload: any = { ...data };
+
+    if (mode === "update" && initialData) {
+      const initialFile = get(initialData, "file");
+      if (data.file === initialFile) {
+        payload = omit(payload, ["file"]);
+      }
+    }
+    await mutation.mutateAsync(payload);
   };
 
   return { form, onSubmit, mutation };

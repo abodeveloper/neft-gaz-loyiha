@@ -51,6 +51,8 @@ export const createNew = async (data: NewDto) => {
     });
   }
 
+
+
   const response = await api.post("/api/posts/", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
@@ -82,7 +84,7 @@ export const updateNew = async (id: number, data: Partial<NewDto>) => {
         // Backend shu ID larni ko'rib, bularni o'chirmaslik kerakligini tushunadi.
         // Eslatma: Backendda buni qabul qiluvchi field nomi "existing_ids" yoki shunga o'xshash bo'lishi mumkin.
         // Agar backend faqat "upload_images" kutsa va eskilarni boshqarolmasa, bu qismni backendchi bilan gaplashing.
-        formData.append("existing_ids", item.id.toString());
+        formData.append("exists_image_ids", item.id.toString());
       }
     });
   }
