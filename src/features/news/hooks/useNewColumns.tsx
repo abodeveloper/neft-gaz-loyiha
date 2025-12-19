@@ -93,7 +93,7 @@ export function useNewColumns(): ColumnDef<News>[] {
       header: t("Action"),
       cell: ({ row }) => (
         <div className="flex gap-2">
-          <Button
+          {/* <Button
             variant="outline"
             size="sm"
             onClick={() => navigate(`view/${row.getValue("id")}`)}
@@ -101,7 +101,7 @@ export function useNewColumns(): ColumnDef<News>[] {
             disabled={isDeleting}
           >
             <RiEyeLine className="h-4 w-4" />
-          </Button>
+          </Button> */}
           <Button
             variant="outline"
             size="sm"
