@@ -1,25 +1,22 @@
 import api from "@/lib/axios";
+import { cleanParams } from "@/shared/utils/api.utils";
 import { CarouselDto } from "../schemas/createCarouselSchema";
 
-export const getCarouselsData = async (search: string, filterQuery?: string) => {
-  let url = `/parts/carousels/`;
+export const getCarouselsData = async (
+  search: string,
+  filterQuery: Record<string, any>
+) => {
 
-  if (search) {
-    // search bo‘lsa, ?search= qo‘shamiz
-    url += `?search=${encodeURIComponent(search)}`;
-  }
+  const url = `/parts/carousels/`;
 
-  if (filterQuery) {
-    // filterQuery allaqachon & bilan boshlanadi
-    // agar search bo‘lmasa, ? ni qo‘shib, & ni olib tashlaymiz
-    if (!search && filterQuery.startsWith("&")) {
-      url += `?${filterQuery.slice(1)}`;
-    } else {
-      url += filterQuery;
-    }
-  }
+  const params = cleanParams({
+    search,
+    ...filterQuery
+  })
 
-  const response = await api.get(url);
+  const response = await api.get(url, {
+    params
+  });
   return response.data;
 };
 

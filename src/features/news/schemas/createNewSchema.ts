@@ -10,6 +10,11 @@ const newsTypeValues = Object.values(NewsType) as [string, ...string[]];
 // Factory funksiya
 export const createNewSchema = (t: (key: string) => string) =>
   z.object({
+
+    pages: z
+          .array(z.union([z.number(), z.string()])).min(1, { message: t("Required field") })
+          .default([]),
+
     title_uz: z
       .string()
       .min(1, { message: t("Required field") })

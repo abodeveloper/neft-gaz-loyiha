@@ -1,15 +1,22 @@
 import api from "@/lib/axios";
+import { cleanParams } from "@/shared/utils/api.utils";
 import { PageImageDto } from "../schemas/createPageImageSchema";
 
-export const getPageImagesData = async (pageId?: string, search?: string) => {
-  let url = `/menu/page-images/?page=${pageId}`;
+export const getPageImagesData = async (
+  pageId?: string | undefined,
+  search?: string | undefined,
+) => {
 
-  if (search) {
-    // search bo‘lsa, ?search= qo‘shamiz
-    url += `&search=${encodeURIComponent(search)}`;
-  }
+  const url = `/menu/page-images/`;
 
-  const response = await api.get(url);
+  const params = cleanParams({
+    page: pageId,
+    search,
+  })
+
+  const response = await api.get(url, {
+    params
+  });
   return response.data;
 };
 

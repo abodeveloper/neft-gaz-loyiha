@@ -1,4 +1,5 @@
 import api from "@/lib/axios";
+import { cleanParams } from "@/shared/utils/api.utils";
 import { MenuDto } from "../schemas/createMenuSchema";
 import { Menu } from "../types";
 
@@ -7,25 +8,21 @@ export const getAllMenus = async (): Promise<Menu[]> => {
   return data;
 };
 
-export const getMenusData = async (search: string, filterQuery?: string) => {
-  let url = `/menu/menus/`;
+export const getMenusData = async (
+  search: string,
+  filterQuery: Record<string, any>
+) => {
 
-  if (search) {
-    // search bo‘lsa, ?search= qo‘shamiz
-    url += `?search=${encodeURIComponent(search)}`;
-  }
+  const url = `/menu/menus/`;
 
-  if (filterQuery) {
-    // filterQuery allaqachon & bilan boshlanadi
-    // agar search bo‘lmasa, ? ni qo‘shib, & ni olib tashlaymiz
-    if (!search && filterQuery.startsWith("&")) {
-      url += `?${filterQuery.slice(1)}`;
-    } else {
-      url += filterQuery;
-    }
-  }
+  const params = cleanParams({
+    search,
+    ...filterQuery
+  })
 
-  const response = await api.get(url);
+  const response = await api.get(url, {
+    params
+  });
   return response.data;
 };
 

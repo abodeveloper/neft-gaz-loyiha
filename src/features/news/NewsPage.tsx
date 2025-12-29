@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/select";
 import ErrorMessage from "@/shared/components/atoms/error-message/ErrorMessage";
 import { useDebounce } from "@/shared/hooks/useDebounce";
-import { buildFilterQuery } from "@/shared/utils/helper";
 import { RiAddLine } from "@remixicon/react";
 import { useQuery } from "@tanstack/react-query";
 import { get } from "lodash";
@@ -27,19 +26,27 @@ interface FilterForm {
   status: boolean;
 }
 
+// 1. Default qiymatlarni tashqariga yoki component ichida alohida obyektga olamiz
+const DEFAULT_VALUES: FilterForm = {
+  type: NewsType.NEWS,
+  status: true,
+};
+
 export default function NewsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
-  const [filterQuery, setFilterQuery] = useState("");
-  const debouncedSearch = useDebounce<string>(searchInput, 300); // 300ms kechikish
+
+  // 2. filterQuery ni boshlang'ich qiymatini DEFAULT_VALUES bilan bir xil qilamiz
+  const [filterQuery, setFilterQuery] = useState<FilterForm>(
+    DEFAULT_VALUES
+  );
+
+  const debouncedSearch = useDebounce<string>(searchInput, 300);
 
   const { control, handleSubmit, reset } = useForm<FilterForm>({
-    defaultValues: {
-      type: NewsType.NEWS,
-      status: true, // Boolean sifatida boshlang‘ich qiymat
-    },
+    defaultValues: DEFAULT_VALUES, // 3. Formaga ham o'sha qiymatni beramiz
   });
 
   const { data, isLoading, isError } = useQuery({
@@ -49,7 +56,6 @@ export default function NewsPage() {
 
   const columns = useNewColumns();
 
-  // Data va pagination ma'lumotlari
   const tableData = get(data, "results", []);
   const paginationInfo = {
     totalCount: get(data, "count", 0),
@@ -57,7 +63,6 @@ export default function NewsPage() {
     currentPage: page,
   };
 
-  // Qidiruv yoki filter o‘zgarganda sahifani 1 ga qaytarish
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch, filterQuery]);
@@ -71,18 +76,15 @@ export default function NewsPage() {
     );
 
   const onSubmit = (data: FilterForm) => {
-    setFilterQuery(buildFilterQuery(data));
+    setFilterQuery(data);
   };
 
-  // To‘g‘rilangan reset funksiyasi
+  // 4. Reset funksiyasini to'g'irlaymiz: u bo'sh satr emas, balki default qiymatga qaytishi kerak
   const handleReset = () => {
-    reset({
-      type: NewsType.NEWS,
-      status: true, // Boolean sifatida boshlang‘ich qiymat
-    });
-    setFilterQuery(""); // Filter queryni tozalash
-    setSearchInput(""); // Qidiruv maydonini tozalash
-    setPage(1); // Sahifani boshlang‘ich holatga qaytarish
+    reset(DEFAULT_VALUES); // Formani vizual holatini tiklash
+    setFilterQuery(DEFAULT_VALUES); // So'rovni boshlang'ich holatga qaytarish
+    setSearchInput("");
+    setPage(1);
   };
 
   return (
@@ -117,7 +119,6 @@ export default function NewsPage() {
                     <SelectValue placeholder={t("Filter by Type")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {/* <SelectItem value="all">{t("All")}</SelectItem> */}
                     <SelectItem value={NewsType.NEWS}>{t("News")}</SelectItem>
                     <SelectItem value={NewsType.ANNOUNCEMENT}>
                       {t("Announcement")}
@@ -131,8 +132,8 @@ export default function NewsPage() {
               control={control}
               render={({ field }) => (
                 <Select
-                  onValueChange={(value) => field.onChange(value === "true")} // Stringni booleanga aylantirish
-                  value={field.value ? "true" : "false"} // Booleanni stringga aylantirish
+                  onValueChange={(value) => field.onChange(value === "true")}
+                  value={field.value ? "true" : "false"}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder={t("Filter by status")} />
@@ -161,9 +162,6 @@ export default function NewsPage() {
           currentPage={paginationInfo.currentPage}
           onPageChange={setPage}
           isLoading={isLoading}
-          onRowClick={(row) => {
-            // navigate(`${row.id}`);
-          }}
         />
       </div>
     </div>

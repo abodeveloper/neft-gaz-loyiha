@@ -1,15 +1,22 @@
 import api from "@/lib/axios";
+import { cleanParams } from "@/shared/utils/api.utils";
 import { PageFileDto } from "../schemas/createPageFileSchema";
 
-export const getPageFilesData = async (pageId?: string, search?: string) => {
-  let url = `/menu/page-files/?page=${pageId}`;
+export const getPageFilesData = async (
+  pageId?: string | undefined,
+  search?: string | undefined,
+) => {
 
-  if (search) {
-    // search bo‘lsa, ?search= qo‘shamiz
-    url += `&search=${encodeURIComponent(search)}`;
-  }
+  const url = `/menu/page-files/`;
 
-  const response = await api.get(url);
+  const params = cleanParams({
+    page: pageId,
+    search,
+  })
+
+  const response = await api.get(url, {
+    params
+  });
   return response.data;
 };
 

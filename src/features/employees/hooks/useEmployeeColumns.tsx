@@ -66,7 +66,7 @@ export function useEmployeeColumns(): ColumnDef<Employee>[] {
             title={position || undefined}
           >
             {position || (
-              <span className="text-muted-foreground">{t("No full name")}</span>
+              <span className="text-muted-foreground">{t("No position")}</span>
             )}
           </div>
         );

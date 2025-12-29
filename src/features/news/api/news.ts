@@ -1,19 +1,24 @@
 import api from "@/lib/axios";
+import { cleanParams } from "@/shared/utils/api.utils";
 import { NewDto } from "../schemas/createNewSchema";
 
 export const getNewsData = async (
   page: number,
   search: string,
-  filterQuery: string
+  filterQuery: Record<string, any>
 ) => {
-  let url = `/api/posts/?page=${page}`;
-  if (search) {
-    url += `&search=${search}`;
-  }
-  if (filterQuery) {
-    url += `&${filterQuery}`;
-  }
-  const response = await api.get(url);
+
+  const url = `/api/posts/`;
+
+  const params = cleanParams({
+    page,
+    search,
+    ...filterQuery
+  })
+  
+  const response = await api.get(url, {
+    params
+  });
   return response.data;
 };
 
@@ -40,6 +45,15 @@ export const createNew = async (data: NewDto) => {
   formData.append("type", data.type);
   formData.append("status", data.status.toString());
 
+  // --- PAGES (TO'G'IRLANGAN) ---
+  if (data.pages && data.pages.length > 0) {
+    data.pages.forEach((item) => {
+      // Agar item string bo'lib qolgan bo'lsa ham baribir append qilaveramiz,
+      // chunki FormData baribir stringga o'giradi.
+      formData.append("pages", item.toString());
+    });
+  }
+
   // --- RASMLAR LOGIKASI (CREATE) ---
   // Create da faqat yangi fayllar bo'ladi, lekin baribir tekshiramiz
   if (Array.isArray(data.images)) {
@@ -51,8 +65,6 @@ export const createNew = async (data: NewDto) => {
     });
   }
 
-
-
   const response = await api.post("/api/posts/", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
@@ -62,34 +74,42 @@ export const createNew = async (data: NewDto) => {
 export const updateNew = async (id: number, data: Partial<NewDto>) => {
   const formData = new FormData();
 
-  // Matnli maydonlar
-  if (data.title_uz) formData.append("title_uz", data.title_uz);
-  if (data.title_ru) formData.append("title_ru", data.title_ru);
-  if (data.title_en) formData.append("title_en", data.title_en);
-  if (data.description_uz) formData.append("description_uz", data.description_uz);
-  if (data.description_ru) formData.append("description_ru", data.description_ru);
-  if (data.description_en) formData.append("description_en", data.description_en);
-  if (data.type) formData.append("type", data.type);
-  if (data.status !== undefined) formData.append("status", data.status.toString());
+  // 1. Oddiy matnli maydonlarni avtomatik qo'shish (qayta-qayta if yozmaslik uchun)
+  const textFields = [
+    "title_uz", "title_ru", "title_en",
+    "description_uz", "description_ru", "description_en",
+    "type"
+  ] as const;
 
-  // --- RASMLAR LOGIKASI (UPDATE) ---
-  // Bu yerda data.images massiv bo'ladi
+  textFields.forEach((field) => {
+    if (data[field]) formData.append(field, data[field] as string);
+  });
+
+  // 2. Status (boolean yoki 0 bo'lishi mumkinligi uchun alohida tekshiramiz)
+  if (data.status !== undefined) {
+    formData.append("status", data.status.toString());
+  }
+
+  // 3. PAGES - Arrayni to'g'ri yuborish (Sizdagi asosiy muammo shu edi)
+  if (data.pages && data.pages.length > 0) {
+    data.pages.forEach((pageId) => {
+      // Har bir ID ni alohida append qilamiz
+      formData.append("pages", pageId.toString());
+    });
+  }
+
+  // 4. RASMLAR LOGIKASI
   if (Array.isArray(data.images)) {
     data.images.forEach((item: any) => {
       if (item instanceof File) {
-        // 1. Agar bu YANGI fayl bo'lsa, uni fayl sifatida yuklaymiz
+        // Yangi yuklanayotgan fayllar
         formData.append("upload_images", item);
       } else if (item.id) {
-        // 2. Agar bu ESKI fayl bo'lsa (backenddan kelgan object), uning ID sini yuboramiz.
-        // Backend shu ID larni ko'rib, bularni o'chirmaslik kerakligini tushunadi.
-        // Eslatma: Backendda buni qabul qiluvchi field nomi "existing_ids" yoki shunga o'xshash bo'lishi mumkin.
-        // Agar backend faqat "upload_images" kutsa va eskilarni boshqarolmasa, bu qismni backendchi bilan gaplashing.
+        // Eski saqlanib qolgan rasmlarning IDsi
         formData.append("exists_image_ids", item.id.toString());
       }
     });
   }
-
-  console.log("FormData for update:", formData);
 
   const response = await api.patch(`/api/posts/${id}/`, formData, {
     headers: { "Content-Type": "multipart/form-data" },

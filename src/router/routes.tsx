@@ -51,6 +51,47 @@ const UpdateEmployeesPage = lazy(
   () => import("@/features/employees/UpdateEmployeePage")
 );
 
+
+const LaboratoriesPage = lazy(() => import("@/features/laboratories/LaboratoriesPage"));
+const CreateLaboratoryPage = lazy(() => import("@/features/laboratories/CreateLaboratoryPage"));
+const UpdateLaboratoryPage = lazy(
+  () => import("@/features/laboratories/UpdateLaboratoryPage")
+);
+
+const DepartmentsPage = lazy(
+  () => import("@/features/departments/DepartmentsPage")
+);
+const CreateDepartmentPage = lazy(
+  () => import("@/features/departments/CreateDepartmentPage")
+);
+const UpdateDepartmentPage = lazy(
+  () => import("@/features/departments/UpdateDepartmentPage")
+);
+
+const ScientificDirectionsPage = lazy(
+  () => import("@/features/scientific-directions/ScientificDirectionsPage")
+);
+const CreateScientificDirectionPage = lazy(
+  () => import("@/features/scientific-directions/CreateScientificDirectionPage")
+);
+const UpdateScientificDirectionPage = lazy(
+  () => import("@/features/scientific-directions/UpdateScientificDirectionPage")
+);
+
+
+const PostgraduateEducationsPage = lazy(
+  () => import("@/features/postgraduate-educations/PostgraduateEducationsPage")
+);
+const CreatePostgraduateEducationPage = lazy(
+  () =>
+    import("@/features/postgraduate-educations/CreatePostgraduateEducationPage")
+);
+const UpdatePostgraduateEducationPage = lazy(
+  () =>
+    import("@/features/postgraduate-educations/UpdatePostgraduateEducationPage")
+);
+
+
 export const routes = [
   {
     path: "/login",
@@ -119,6 +160,38 @@ export const routes = [
           { path: "create", element: <CreateEmployeesPage /> },
           { path: "update/:id", element: <UpdateEmployeesPage /> },
           { path: "view/:id", element: <MenuPageDetailPage /> },
+        ],
+      },
+      {
+        path: "laboratories",
+        children: [
+          { index: true, element: <LaboratoriesPage /> },
+          { path: "create", element: <CreateLaboratoryPage /> },
+          { path: "update/:id", element: <UpdateLaboratoryPage /> },
+        ],
+      },
+      {
+        path: "departments",
+        children: [
+          { index: true, element: <DepartmentsPage /> },
+          { path: "create", element: <CreateDepartmentPage /> },
+          { path: "update/:id", element: <UpdateDepartmentPage /> },
+        ],
+      },
+      {
+        path: "scientific-directions",
+        children: [
+          { index: true, element: <ScientificDirectionsPage /> },
+          { path: "create", element: <CreateScientificDirectionPage /> },
+          { path: "update/:id", element: <UpdateScientificDirectionPage /> },
+        ],
+      },
+      {
+        path: "postgraduate-educations",
+        children: [
+          { index: true, element: <PostgraduateEducationsPage /> },
+          { path: "create", element: <CreatePostgraduateEducationPage /> },
+          { path: "update/:id", element: <UpdatePostgraduateEducationPage /> },
         ],
       },
       { path: "profile", element: <div>Profile</div> },

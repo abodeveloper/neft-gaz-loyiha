@@ -65,7 +65,7 @@ const MyTextarea = <TFieldValues extends FieldValues>({
                   value={field.value ?? ""}
                   onChange={(e) => field.onChange(e.target.value)}
                   className={twMerge([
-                    "mt-2 resize-none",
+                    "mt-2",
                     error && "border-red-500 focus-visible:ring-red-500",
                     className,
                   ])}

@@ -4,10 +4,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { get } from "lodash";
 import { useForm, UseFormReturn } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { createNew, updateNew } from "../api/news";
 import { createNewSchema, NewDto } from "../schemas/createNewSchema";
 import { NewsType } from "../types";
-import { useNavigate } from "react-router-dom";
 
 interface UseNewFormProps {
   mode: "create" | "update";
@@ -43,6 +43,7 @@ export const useNewForm = ({
       type: get(initialData, "type", NewsType.NEWS),
       status: get(initialData, "status", true),
       images: get(initialData, "images", []),
+      pages: get(initialData, "pages", []),
     },
   });
 

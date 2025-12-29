@@ -8,10 +8,15 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
+  RiBuilding2Line,
   RiCarouselView,
   RiDashboardLine,
+  RiFileList3Line,
+  RiFlaskLine,
+  RiGraduationCapLine,
   RiMedalLine,
   RiMenu2Line,
+  RiMicroscopeLine,
   RiNewspaperLine,
   RiPagesLine,
   RiUserCommunityLine,
@@ -33,16 +38,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/dashboard/home",
         icon: RiDashboardLine,
       },
-      {
-        title: t("News & Announcements"),
-        url: "/dashboard/news-and-announcements",
-        icon: RiNewspaperLine,
-      },
-      {
-        title: t("Carousels"),
-        url: "/dashboard/carousels",
-        icon: RiCarouselView,
-      },
+
       {
         title: t("Menu"),
         url: "/dashboard/menus",
@@ -57,6 +53,41 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t("Employees"),
         url: "/dashboard/employees",
         icon: RiUserCommunityLine,
+      },
+      {
+        title: t("News & Announcements"),
+        url: "/dashboard/news-and-announcements",
+        icon: RiNewspaperLine,
+      },
+      {
+        title: t("Carousels"),
+        url: "/dashboard/carousels",
+        icon: RiCarouselView,
+      },
+      {
+        title: t("Laboratories"),
+        url: "/dashboard/laboratories",
+        icon: RiFlaskLine, // Laboratoriya uchun kolba
+      },
+      {
+        title: t("Departments"),
+        url: "/dashboard/departments",
+        icon: RiBuilding2Line, // Bo'lim yoki bino ramzi
+      },
+      {
+        title: t("Scientific directions"),
+        url: "/dashboard/scientific-directions",
+        icon: RiMicroscopeLine, // Ilm-fan va atom ramzi
+      },
+      {
+        title: t("Postgraduate Educations"),
+        url: "/dashboard/postgraduate-educations",
+        icon: RiGraduationCapLine, // Oliy ta'lim/bitiruvchilar ramzi
+      },
+      {
+        title: t("Applications"),
+        url: "/dashboard/applications",
+        icon: RiFileList3Line, // Arizalar ro'yxati
       },
       // {
       //   title: "Biz haqimizda",

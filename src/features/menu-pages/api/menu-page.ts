@@ -1,4 +1,5 @@
 import api from "@/lib/axios";
+import { cleanParams } from "@/shared/utils/api.utils";
 import { MenuPageDto } from "../schemas/updateMenuPageSchema";
 import { MenuPage } from "../types";
 
@@ -10,18 +11,24 @@ export const getAllMenuPages = async (): Promise<MenuPage[]> => {
 export const getMenuPagesData = async (
   page: number,
   search: string,
-  filterQuery: string
+  filterQuery: Record<string, any>
 ) => {
-  let url = `/menu/pages/?page=${page}`;
-  if (search) {
-    url += `&search=${search}`;
-  }
-  if (filterQuery) {
-    url += `&${filterQuery}`;
-  }
-  const response = await api.get(url);
+
+  const url = `/menu/pages/`;
+
+  const params = cleanParams({
+    page,
+    search,
+    ...filterQuery
+  })
+
+  const response = await api.get(url, {
+    params
+  });
   return response.data;
 };
+
+
 
 export const getMenuPageById = async (id: string | number | undefined) => {
   const response = await api.get(`/menu/pages/${id}/`);

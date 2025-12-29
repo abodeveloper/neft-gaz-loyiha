@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { getAllMenuPages } from "@/features/menu-pages/api/menu-page";
+import { localized } from "@/i18n";
 import BackButton from "@/shared/components/atoms/back-button/BackButton";
 import {
   MyFileInput,
@@ -7,6 +9,7 @@ import {
   MySelect,
   MyTextarea,
 } from "@/shared/components/atoms/form-elements";
+import { useData } from "@/shared/hooks/useData";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useNewForm } from "../hooks/useNewForm";
@@ -35,6 +38,17 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
     { value: false, label: t("Inactive") },
   ];
 
+  const { data: pagesData } = useData({
+      fetchFn: getAllMenuPages,
+      labelKey: "title_uz",
+      valueKey: "id",
+      queryKey: ["pages", "all"],
+    });
+  
+    const PAGE_OPTIONS = pagesData?.map((page: any) => {
+      return { label: localized(page, "title"), value: page.id };
+    });
+
   return (
     <div className="space-y-6 w-full">
       <div className="flex justify-between items-center">
@@ -46,6 +60,16 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
 
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <MySelect
+            control={control}
+            name="pages"
+            label={t("Pages")}
+            placeholder={t("Select pages")}
+            options={PAGE_OPTIONS}
+            multiple={true}
+            searchable={true}
+            required
+          />
           <MyInput
             control={control}
             name="title_uz"
@@ -73,8 +97,6 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
             label={t("Description (uz)")}
             placeholder={t("Enter a description in Uzbek...")}
             rows={10}
-            // maxLength={1000}
-            // showCounter
             required
           />
 
@@ -84,8 +106,6 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
             label={t("Description (ru)")}
             placeholder={t("Enter a description in Russian...")}
             rows={10}
-            // maxLength={1000}
-            // showCounter
             required
           />
 

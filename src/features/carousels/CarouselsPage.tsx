@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/select";
 import ErrorMessage from "@/shared/components/atoms/error-message/ErrorMessage";
 import { useDebounce } from "@/shared/hooks/useDebounce";
-import { buildFilterQuery } from "@/shared/utils/helper";
 import { RiAddLine } from "@remixicon/react";
 import { useQuery } from "@tanstack/react-query";
 import { isEmpty } from "lodash";
@@ -25,17 +24,21 @@ interface FilterForm {
   status: boolean;
 }
 
+const DEFAULT_VALUES: FilterForm = {
+  status: true,
+};
+
 export default function CarouselsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState("");
-  const [filterQuery, setFilterQuery] = useState("");
+  const [filterQuery, setFilterQuery] = useState<FilterForm>(
+      DEFAULT_VALUES
+    );
   const debouncedSearch = useDebounce<string>(searchInput, 300); // 300ms kechikish
 
   const { control, handleSubmit, reset } = useForm<FilterForm>({
-    defaultValues: {
-      status: true, // Boolean sifatida boshlang‘ich qiymat
-    },
+    defaultValues: DEFAULT_VALUES,
   });
 
   const { data, isLoading, isError } = useQuery({
@@ -44,8 +47,6 @@ export default function CarouselsPage() {
   });
 
   const columns = useCarouselColumns();
-
-  // Data
 
   const tableData = isEmpty(data) ? [] : data;
 
@@ -58,16 +59,14 @@ export default function CarouselsPage() {
     );
 
   const onSubmit = (data: FilterForm) => {
-    setFilterQuery(buildFilterQuery(data));
+    setFilterQuery(data);
   };
 
   // To‘g‘rilangan reset funksiyasi
   const handleReset = () => {
-    reset({
-      status: true, // Boolean sifatida boshlang‘ich qiymat
-    });
-    setFilterQuery(""); // Filter queryni tozalash
-    setSearchInput(""); // Qidiruv maydonini tozalash
+    reset(DEFAULT_VALUES); // Formani vizual holatini tiklash
+    setFilterQuery(DEFAULT_VALUES); // So'rovni boshlang'ich holatga qaytarish
+    setSearchInput("");
   };
 
   return (

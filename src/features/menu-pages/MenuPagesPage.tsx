@@ -10,13 +10,11 @@ import {
 } from "@/components/ui/select";
 import ErrorMessage from "@/shared/components/atoms/error-message/ErrorMessage";
 import { useDebounce } from "@/shared/hooks/useDebounce";
-import { buildFilterQuery } from "@/shared/utils/helper";
 import { useQuery } from "@tanstack/react-query";
 import { get } from "lodash";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import { getMenuPagesData } from "./api/menu-page";
 import { useMenuColumns } from "./hooks/useMenuPageColumns";
 
@@ -24,19 +22,22 @@ interface FilterForm {
   status: boolean;
 }
 
+const DEFAULT_VALUES: FilterForm = {
+  status: true,
+};
+
 export default function MenuPagesPage() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
-  const [filterQuery, setFilterQuery] = useState("");
+  const [filterQuery, setFilterQuery] = useState<FilterForm>(
+      DEFAULT_VALUES
+    );
   const debouncedSearch = useDebounce<string>(searchInput, 300); // 300ms kechikish
 
   const { control, handleSubmit, reset } = useForm<FilterForm>({
-    defaultValues: {
-      status: true, // Boolean sifatida boshlang‘ich qiymat
-    },
-  });
+      defaultValues: DEFAULT_VALUES, // 3. Formaga ham o'sha qiymatni beramiz
+    });
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["menu-pages", page, debouncedSearch, filterQuery],
@@ -67,17 +68,15 @@ export default function MenuPagesPage() {
     );
 
   const onSubmit = (data: FilterForm) => {
-    setFilterQuery(buildFilterQuery(data));
+    setFilterQuery(data);
   };
 
   // To‘g‘rilangan reset funksiyasi
   const handleReset = () => {
-    reset({
-      status: true, // Boolean sifatida boshlang‘ich qiymat
-    });
-    setFilterQuery(""); // Filter queryni tozalash
-    setSearchInput(""); // Qidiruv maydonini tozalash
-    setPage(1); // Sahifani boshlang‘ich holatga qaytarish
+    reset(DEFAULT_VALUES); // Formani vizual holatini tiklash
+    setFilterQuery(DEFAULT_VALUES); // So'rovni boshlang'ich holatga qaytarish
+    setSearchInput("");
+    setPage(1);
   };
 
   return (

@@ -1,0 +1,162 @@
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import BackButton from "@/shared/components/atoms/back-button/BackButton";
+import {
+  MyInput,
+  MySelect,
+  MyTextarea,
+} from "@/shared/components/atoms/form-elements";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { useScientificForm } from "../hooks/useScientificForm";
+
+import ExampleImage from "@/assets/example-logo-select.png";
+
+interface FormProps {
+  mode: "create" | "update";
+  id?: number;
+  initialData?: any;
+}
+
+const ScientificForm = ({ mode, id, initialData }: FormProps) => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const { form, onSubmit, mutation } = useScientificForm({
+    mode,
+    id,
+    initialData,
+    t,
+  });
+
+  const { control, handleSubmit } = form;
+
+  const statusOptions = [
+    { value: true, label: t("Active") },
+    { value: false, label: t("Inactive") },
+  ];
+
+  return (
+    <div className="space-y-6 w-full">
+      <div className="flex justify-between items-center">
+        <h1 className="text-xl font-semibold">
+          {mode === "create"
+            ? t("Create scientific direction")
+            : t("Update scientific direction")}
+        </h1>
+        <BackButton />
+      </div>
+
+      <Form {...form}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <MyInput
+            control={control}
+            name="title_uz"
+            label={t("Title (uz)")}
+            required
+          />
+
+          <MyInput
+            control={control}
+            name="title_ru"
+            label={t("Title (ru)")}
+            required
+          />
+
+          <MyInput
+            control={control}
+            name="title_en"
+            label={t("Title (en)")}
+            required
+          />
+
+          <MyTextarea
+            control={control}
+            name="sub_title_uz"
+            label={t("Sub title (uz)")}
+            rows={10}
+            required
+          />
+
+          <MyTextarea
+            control={control}
+            name="sub_title_ru"
+            label={t("Sub title (ru)")}
+            rows={10}
+            required
+          />
+
+          <MyTextarea
+            control={control}
+            name="sub_title_en"
+            label={t("Sub title (en)")}
+            rows={10}
+            required
+          />
+
+          <MyInput
+            control={control}
+            name="logo"
+            label={
+              <>
+                {t("Logo name")} (
+                <a href={"https://lucide.dev/icons"} target="_blank">
+                  https://lucide.dev/icons
+                </a>
+                )
+              </>
+            }
+            placeholder={t("Example: graduation-cap")}
+            required
+          />
+
+          <img src={ExampleImage} alt="" className="w-full" />
+
+          <MyInput control={control} name="slug" label={t("Slug")} required />
+
+          {/* Type + Status */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <MyInput
+              control={control}
+              name="position"
+              type="number"
+              min={1}
+              label={t("Order")}
+              required
+            />
+            <MySelect
+              control={control}
+              name="status"
+              label={t("Status")}
+              placeholder={t("Select status")}
+              options={statusOptions}
+              required
+            />
+          </div>
+
+          <div className="flex justify-end gap-3">
+            <Button
+              variant={"outline"}
+              type="button"
+              className="w-44"
+              disabled={mutation.isPending}
+              onClick={() => navigate(-1)}
+            >
+              {t("Cancel")}
+            </Button>
+            <Button
+              type="submit"
+              className="w-44"
+              disabled={mutation.isPending}
+              loading={mutation.isPending}
+            >
+              {mode === "create" ? t("Create") : t("Update")}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
+  );
+};
+
+export default ScientificForm;
