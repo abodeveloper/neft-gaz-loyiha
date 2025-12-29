@@ -41,7 +41,9 @@ export const useDepartmentForm = ({
       description_en: get(initialData, "description_en", ""),
       position: get(initialData, "position"),
       slug: get(initialData, "slug", ""),
-      sub_title: get(initialData, "sub_title", ""),
+      sub_title_uz: get(initialData, "sub_title_uz", ""),
+      sub_title_ru: get(initialData, "sub_title_ru", ""),
+      sub_title_en: get(initialData, "sub_title_en", ""),
       status: get(initialData, "status", true),
     },
   });

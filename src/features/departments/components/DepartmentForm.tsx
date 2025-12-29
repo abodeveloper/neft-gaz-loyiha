@@ -87,7 +87,30 @@ const DepartmentForm = ({ mode, id, initialData }: FormProps) => {
             required
           />
 
-          <MyInput control={control} name="sub_title" label={t("Sub title")} required />
+          <MyTextarea
+            control={control}
+            name="sub_title_uz"
+            label={t("Sub title (uz)")}
+            rows={10}
+            required
+          />
+
+          <MyTextarea
+            control={control}
+            name="sub_title_ru"
+            label={t("Sub title (ru)")}
+            rows={10}
+            required
+          />
+
+          <MyTextarea
+            control={control}
+            name="sub_title_en"
+            label={t("Sub title (en)")}
+            rows={10}
+            required
+          />
+
           <MyInput control={control} name="slug" label={t("Slug")} required />
 
           {/* Type + Status */}

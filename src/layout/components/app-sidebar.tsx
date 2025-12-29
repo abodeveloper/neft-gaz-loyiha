@@ -75,7 +75,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: RiBuilding2Line, // Bo'lim yoki bino ramzi
       },
       {
-        title: t("Scientific directions"),
+        title: t("Scientific Directions"),
         url: "/dashboard/scientific-directions",
         icon: RiMicroscopeLine, // Ilm-fan va atom ramzi
       },

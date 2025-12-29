@@ -51,9 +51,21 @@ export function useDepartmentColumns(): ColumnDef<Department>[] {
       },
     },
     {
-      accessorKey: "sub_title",
+      id: "sub_title",
       header: t("Sub title"),
-      cell: ({ row }) => <div>{row.getValue("sub_title")}</div>,
+      size: 300,
+      cell: ({ row }) => {
+        const item = row.original;
+        const sub_title = localized(item, "sub_title");
+
+        return (
+          <div className="font-medium" title={sub_title || undefined}>
+            {sub_title || (
+              <span className="text-muted-foreground">{t("No sub title")}</span>
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "slug",

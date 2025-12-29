@@ -91,6 +91,11 @@ const UpdatePostgraduateEducationPage = lazy(
     import("@/features/postgraduate-educations/UpdatePostgraduateEducationPage")
 );
 
+const ApplicationsPage = lazy(
+  () =>
+    import("@/features/applications/ApplicationsPage")
+);
+
 
 export const routes = [
   {
@@ -194,6 +199,7 @@ export const routes = [
           { path: "update/:id", element: <UpdatePostgraduateEducationPage /> },
         ],
       },
+      { path: "applications", element: <ApplicationsPage/> },
       { path: "profile", element: <div>Profile</div> },
       {
         path: "*",

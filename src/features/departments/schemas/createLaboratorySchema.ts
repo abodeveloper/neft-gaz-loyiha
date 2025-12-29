@@ -28,7 +28,16 @@ export const createDepartmentSchema = (t: (key: string) => string) =>
       .string()
       .min(1, { message: t("Required field") }),
 
-    sub_title: z.string().min(1, { message: t("Required field") }),
+    sub_title_uz: z
+            .string()
+            .min(1, { message: t("Required field") }),
+    sub_title_ru: z
+            .string()
+            .min(1, { message: t("Required field") }),
+    sub_title_en: z
+            .string()
+            .min(1, { message: t("Required field") }),
+
 
     // STATUS
     status: z.boolean().default(true),
