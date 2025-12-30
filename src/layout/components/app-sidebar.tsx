@@ -8,7 +8,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
-  RiBuilding2Line,
   RiCarouselView,
   RiDashboardLine,
   RiFileList3Line,
@@ -16,12 +15,12 @@ import {
   RiGraduationCapLine,
   RiMedalLine,
   RiMenu2Line,
-  RiMicroscopeLine,
   RiNewspaperLine,
   RiPagesLine,
-  RiUserCommunityLine,
+  RiUserCommunityLine
 } from "@remixicon/react";
 import { IconHelp } from "@tabler/icons-react";
+import { Atom, Building2 } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { NavMain } from "./nav-main";
@@ -72,12 +71,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         title: t("Departments"),
         url: "/dashboard/departments",
-        icon: RiBuilding2Line, // Bo'lim yoki bino ramzi
+        icon: Building2, // Bo'lim yoki bino ramzi
       },
       {
         title: t("Scientific Directions"),
         url: "/dashboard/scientific-directions",
-        icon: RiMicroscopeLine, // Ilm-fan va atom ramzi
+        icon: Atom, // Ilm-fan va atom ramzi
       },
       {
         title: t("Postgraduate Educations"),

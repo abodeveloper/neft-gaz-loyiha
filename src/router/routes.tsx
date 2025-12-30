@@ -6,6 +6,7 @@ import AdminProtectedRoute from "./AdminProtectedRoute";
 const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
 const Layout = lazy(() => import("@/layout/layout"));
 
+const DashboardPage = lazy(() => import("@/features/dashboard/DashboardPage"));
 const HomePage = lazy(() => import("@/features/home/HomePage"));
 
 const NewsPage = lazy(() => import("@/features/news/NewsPage"));
@@ -112,7 +113,7 @@ export const routes = [
     ),
     children: [
       { index: true, element: <Navigate to="home" /> },
-      { path: "home", element: <HomePage /> },
+      { path: "home", element: <DashboardPage /> },
       {
         path: "news-and-announcements",
         children: [
@@ -199,7 +200,7 @@ export const routes = [
           { path: "update/:id", element: <UpdatePostgraduateEducationPage /> },
         ],
       },
-      { path: "applications", element: <ApplicationsPage/> },
+      { path: "applications", element: <ApplicationsPage /> },
       { path: "profile", element: <div>Profile</div> },
       {
         path: "*",
