@@ -13,7 +13,6 @@ import {
   RiFileList3Line,
   RiFlaskLine,
   RiGraduationCapLine,
-  RiMedalLine,
   RiMenu2Line,
   RiNewspaperLine,
   RiPagesLine,
@@ -26,6 +25,8 @@ import { useTranslation } from "react-i18next";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
 import { NavUser } from "./nav-user";
+
+import Logo from "@/assets/logo.png";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation();
@@ -135,17 +136,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       >
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5 hover:bg-inherit active:bg-inherit"
-            >
-              <div>
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <RiMedalLine className="!size-5" />
-                </div>
-                <span className="text-base font-semibold">NGGI</span>
-              </div>
-            </SidebarMenuButton>
+            <div className="px-1 flex items-center gap-2">
+              <img src={Logo} alt="" width={50} />
+              <span className="text-base font-semibold">NGGI</span>
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

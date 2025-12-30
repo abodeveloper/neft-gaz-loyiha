@@ -60,7 +60,7 @@ export function SiteHeader() {
           <SidebarTrigger className="-ml-1 scale-75" />
           <Separator orientation="vertical" className="mr-2 h-4" />
           <h3 className="font-medium text-xl">
-            {t("«Institute of Geology and Exploration of Oil and Gas Fields»")}
+            {t("Institute of Geology and Exploration of Oil and Gas Fields")}
           </h3>
         </div>
 

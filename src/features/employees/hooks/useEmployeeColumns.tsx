@@ -91,15 +91,6 @@ export function useEmployeeColumns(): ColumnDef<Employee>[] {
       ),
     },
     {
-      accessorKey: "phone",
-      header: t("Phone"),
-      cell: ({ row }) => (
-        <div>
-          <Badge variant="secondary">{row.getValue("phone")}</Badge>
-        </div>
-      ),
-    },
-    {
       accessorKey: "email",
       header: t("Email"),
       cell: ({ row }) => (
