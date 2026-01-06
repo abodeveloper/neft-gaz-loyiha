@@ -4,8 +4,7 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+  SidebarMenuItem
 } from "@/components/ui/sidebar";
 import {
   RiCarouselView,
@@ -15,6 +14,7 @@ import {
   RiGraduationCapLine,
   RiMenu2Line,
   RiNewspaperLine,
+  RiOrganizationChart,
   RiPagesLine,
   RiUserCommunityLine
 } from "@remixicon/react";
@@ -38,7 +38,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/dashboard/home",
         icon: RiDashboardLine,
       },
-
+      {
+        title: t("Company"),
+        url: "/dashboard/company",
+        icon: RiOrganizationChart,
+      },
       {
         title: t("Menu"),
         url: "/dashboard/menus",

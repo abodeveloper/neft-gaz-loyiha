@@ -97,6 +97,14 @@ const ApplicationsPage = lazy(
     import("@/features/applications/ApplicationsPage")
 );
 
+const CompanyPage = lazy(
+  () => import("@/features/company/CompanyPage")
+);
+
+const UpdateCompanyPage = lazy(
+  () => import("@/features/company/UpdateCompanyPage")
+);
+
 
 export const routes = [
   {
@@ -201,7 +209,13 @@ export const routes = [
         ],
       },
       { path: "applications", element: <ApplicationsPage /> },
-      { path: "profile", element: <div>Profile</div> },
+      {
+        path: "company",
+        children: [
+          { index: true, element: <CompanyPage /> },
+          { path: "update", element: <UpdateCompanyPage /> },
+        ],
+      },
       {
         path: "*",
         element: <Navigate to="/dashboard" />,
