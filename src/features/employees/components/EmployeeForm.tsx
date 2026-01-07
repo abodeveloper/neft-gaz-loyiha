@@ -4,10 +4,10 @@ import { getAllMenuPages } from "@/features/menu-pages/api/menu-page";
 import { localized } from "@/i18n";
 import BackButton from "@/shared/components/atoms/back-button/BackButton";
 import {
+  MyEditor,
   MyFileInput,
   MyInput,
-  MySelect,
-  MyTextarea,
+  MySelect
 } from "@/shared/components/atoms/form-elements";
 import { useData } from "@/shared/hooks/useData";
 import { useTranslation } from "react-i18next";
@@ -108,30 +108,33 @@ const EmployeeForm = ({ mode, id, initialData }: FormProps) => {
             required
           />
 
-          <MyTextarea
+          <MyEditor
             control={control}
             name="description_uz"
             label={t("Description (uz)")}
             placeholder={t("Enter a description in Uzbek...")}
-            rows={10}
+            disabled={mutation.isPending}
+            height={700}
             required
           />
 
-          <MyTextarea
+          <MyEditor
             control={control}
             name="description_ru"
             label={t("Description (ru)")}
             placeholder={t("Enter a description in Russian...")}
-            rows={10}
+            disabled={mutation.isPending}
+            height={700}
             required
           />
 
-          <MyTextarea
+          <MyEditor
             control={control}
             name="description_en"
             label={t("Description (en)")}
             placeholder={t("Enter a description in English...")}
-            rows={10}
+            disabled={mutation.isPending}
+            height={700}
             required
           />
 

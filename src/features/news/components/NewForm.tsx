@@ -4,10 +4,10 @@ import { getAllMenuPages } from "@/features/menu-pages/api/menu-page";
 import { localized } from "@/i18n";
 import BackButton from "@/shared/components/atoms/back-button/BackButton";
 import {
+  MyEditor,
   MyFileInput,
   MyInput,
-  MySelect,
-  MyTextarea,
+  MySelect
 } from "@/shared/components/atoms/form-elements";
 import { useData } from "@/shared/hooks/useData";
 import { useTranslation } from "react-i18next";
@@ -70,10 +70,22 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
             searchable={true}
             required
           />
+
           <MyInput
             control={control}
             name="title_uz"
             label={t("Title (uz)")}
+            disabled={mutation.isPending}
+            required
+          />
+          
+          <MyEditor
+            control={control}
+            name="description_uz"
+            label={t("Description (uz)")}
+            placeholder={t("Enter a description in Uzbek...")}
+            disabled={mutation.isPending}
+            height={700}
             required
           />
 
@@ -81,6 +93,16 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
             control={control}
             name="title_ru"
             label={t("Title (ru)")}
+            disabled={mutation.isPending}
+            required
+          />
+
+          <MyEditor
+            control={control}
+            name="description_ru"
+            label={t("Description (ru)")}
+            placeholder={t("Enter a description in Russian...")}
+            height={700}
             required
           />
 
@@ -88,35 +110,17 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
             control={control}
             name="title_en"
             label={t("Title (en)")}
+            disabled={mutation.isPending}
             required
           />
 
-          <MyTextarea
-            control={control}
-            name="description_uz"
-            label={t("Description (uz)")}
-            placeholder={t("Enter a description in Uzbek...")}
-            rows={10}
-            required
-          />
-
-          <MyTextarea
-            control={control}
-            name="description_ru"
-            label={t("Description (ru)")}
-            placeholder={t("Enter a description in Russian...")}
-            rows={10}
-            required
-          />
-
-          <MyTextarea
+          <MyEditor
             control={control}
             name="description_en"
             label={t("Description (en)")}
             placeholder={t("Enter a description in English...")}
-            rows={10}
-            // maxLength={1000}
-            // showCounter
+            disabled={mutation.isPending}
+            height={700}
             required
           />
 

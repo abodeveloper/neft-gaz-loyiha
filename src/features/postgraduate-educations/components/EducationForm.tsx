@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import BackButton from "@/shared/components/atoms/back-button/BackButton";
 import {
+  MyEditor,
   MyInput,
   MySelect,
   MyTextarea
@@ -53,44 +54,14 @@ const EducationForm = ({ mode, id, initialData }: FormProps) => {
             control={control}
             name="title_uz"
             label={t("Title (uz)")}
+            disabled={mutation.isPending}
             required
           />
-
-          <MyInput
-            control={control}
-            name="title_ru"
-            label={t("Title (ru)")}
-            required
-          />
-
-          <MyInput
-            control={control}
-            name="title_en"
-            label={t("Title (en)")}
-            required
-          />
-
           <MyTextarea
             control={control}
             name="sub_title_uz"
             label={t("Sub title (uz)")}
-            rows={10}
-            required
-          />
-
-          <MyTextarea
-            control={control}
-            name="sub_title_ru"
-            label={t("Sub title (ru)")}
-            rows={10}
-            required
-          />
-
-          <MyTextarea
-            control={control}
-            name="sub_title_en"
-            label={t("Sub title (en)")}
-            rows={10}
+            rows={5}
             required
           />
 
@@ -103,49 +74,41 @@ const EducationForm = ({ mode, id, initialData }: FormProps) => {
 
           <MyInput
             control={control}
-            name="direction_ru"
-            label={t("Direction (ru)")}
+            name="duration_uz"
+            label={t("Duration (uz)")}
             required
           />
 
-          <MyInput
-            control={control}
-            name="direction_en"
-            label={t("Direction (en)")}
-            required
-          />
-
-          <MyTextarea
+          <MyEditor
             control={control}
             name="description_uz"
             label={t("Description (uz)")}
             placeholder={t("Enter a description in Uzbek...")}
-            rows={10}
-            required
-          />
-
-          <MyTextarea
-            control={control}
-            name="description_ru"
-            label={t("Description (ru)")}
-            placeholder={t("Enter a description in Russian...")}
-            rows={10}
-            required
-          />
-
-          <MyTextarea
-            control={control}
-            name="description_en"
-            label={t("Description (en)")}
-            placeholder={t("Enter a description in English...")}
-            rows={10}
+            disabled={mutation.isPending}
+            height={700}
             required
           />
 
           <MyInput
             control={control}
-            name="duration_uz"
-            label={t("Duration (uz)")}
+            name="title_ru"
+            label={t("Title (ru)")}
+            disabled={mutation.isPending}
+            required
+          />
+
+          <MyTextarea
+            control={control}
+            name="sub_title_ru"
+            label={t("Sub title (ru)")}
+            rows={5}
+            required
+          />
+
+          <MyInput
+            control={control}
+            name="direction_ru"
+            label={t("Direction (ru)")}
             required
           />
 
@@ -156,10 +119,54 @@ const EducationForm = ({ mode, id, initialData }: FormProps) => {
             required
           />
 
+          <MyEditor
+            control={control}
+            name="description_ru"
+            label={t("Description (ru)")}
+            placeholder={t("Enter a description in Russian...")}
+            height={700}
+            required
+          />
+
+          
+
+          <MyInput
+            control={control}
+            name="title_en"
+            label={t("Title (en)")}
+            disabled={mutation.isPending}
+            required
+          />
+
+          <MyTextarea
+            control={control}
+            name="sub_title_en"
+            label={t("Sub title (en)")}
+            rows={5}
+            required
+          />
+
+          <MyInput
+            control={control}
+            name="direction_en"
+            label={t("Direction (en)")}
+            required
+          />
+
           <MyInput
             control={control}
             name="duration_en"
             label={t("Duration (en)")}
+            required
+          />
+
+          <MyEditor
+            control={control}
+            name="description_en"
+            label={t("Description (en)")}
+            placeholder={t("Enter a description in English...")}
+            disabled={mutation.isPending}
+            height={700}
             required
           />
 

@@ -17,6 +17,16 @@ export const createScientificSchema = (t: (key: string) => string) =>
       .min(1, { message: t("Required field") })
       .max(255, { message: t("Title must be at most 255 characters") }),
 
+    description_uz: z
+      .string()
+      .min(1, { message: t("Required field") }),
+    description_ru: z
+      .string()
+      .min(1, { message: t("Required field") }),
+    description_en: z
+      .string()
+      .min(1, { message: t("Required field") }),  
+
     sub_title_uz: z
       .string()
       .min(1, { message: t("Required field") }),
