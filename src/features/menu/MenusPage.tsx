@@ -80,7 +80,7 @@ export default function MenusPage() {
             onChange={(event) => setSearchInput(event.target.value)}
             className="max-w-sm w-64"
           />
-          <CreateMenuModal />
+          <CreateMenuModal onSuccess={refetch}/>
         </div>
       </div>
       <div className="space-y-4">

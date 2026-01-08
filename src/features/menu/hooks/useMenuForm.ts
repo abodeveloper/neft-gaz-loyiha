@@ -1,6 +1,6 @@
 import { toastService } from "@/lib/toastService";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { get } from "lodash";
 import { useForm, UseFormReturn } from "react-hook-form";
@@ -26,7 +26,6 @@ export const useMenuForm = ({
   onSubmit: (data: MenuDto) => Promise<void>;
   mutation: ReturnType<typeof useMutation<any, AxiosError, MenuDto>>;
 } => {
-  const queryClient = useQueryClient();
 
   const form = useForm<MenuDto, undefined, MenuDto>({
     //@ts-ignore
@@ -55,6 +54,8 @@ export const useMenuForm = ({
       toastService.error(message || t("An error occurred"));
     },
   });
+
+  console.log(form.formState.errors);
 
   const onSubmit = async (data: MenuDto) => {
     await mutation.mutateAsync(data);

@@ -20,7 +20,7 @@ export const createMenuSchema = (t: (key: string) => string) =>
     has_page: z.boolean().refine((val) => val !== undefined, {
       message: t("Required field"),
     }),
-    page_slug: z.string().optional(),
+    page_slug: z.string().nullable().optional(),
 
     position: z.number().min(1, { message: t("Required field") }),
 
