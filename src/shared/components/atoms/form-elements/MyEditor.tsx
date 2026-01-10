@@ -74,7 +74,7 @@ const MyEditor = <TFieldValues extends FieldValues>({
                 )}
               >
                 <Editor
-                  apiKey={import.meta.env.VITE_TINY_EDITOR_KEY_2} // O'zingizniki bo'lsa almashtiring yoki .env ga qo'ying
+                  apiKey={import.meta.env.VITE_TINY_EDITOR_KEY_2}       // O'zingizniki bo'lsa almashtiring yoki .env ga qo'ying
                   value={field.value || ""}
                   disabled={disabled}
                   init={{
