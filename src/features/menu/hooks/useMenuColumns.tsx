@@ -6,6 +6,7 @@ import ConfirmationDialog from "@/shared/components/atoms/confirmation-dialog/Co
 import { RiDeleteBinLine, RiEditLine, RiEyeLine } from "@remixicon/react";
 import { useMutation } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
+import { get } from "lodash";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -47,10 +48,7 @@ export function useMenuColumns(
         const title = localized(news, "title");
 
         return (
-          <div
-            className="font-medium"
-            title={title || undefined}
-          >
+          <div className="font-medium" title={title || undefined}>
             {title || (
               <span className="text-muted-foreground">{t("No title")}</span>
             )}
@@ -71,14 +69,41 @@ export function useMenuColumns(
     {
       accessorKey: "page_slug",
       header: t("Slug or children"),
-      cell: ({ row }) =>
-        row.getValue("has_page") ? (
-          <Badge variant="secondary">{row.getValue("page_slug")}</Badge>
-        ) : (
-          <Badge variant="outline">
-            {t("Children")}: {row.original.children?.length || 0}
-          </Badge>
-        ),
+      cell: ({ row }) => {
+
+        const has_page = row.getValue("has_page");
+        const page_type = get(row.original, "page_type");
+
+        return (
+          <>
+            {has_page ? (
+              <div className="flex gap-2">
+                <Badge variant="outline">
+                  {page_type == "lab"
+                    ? t("Laboratory")
+                    : page_type == "department"
+                    ? t("Department")
+                    : page_type == "faculty"
+                    ? t("Faculty")
+                    : page_type == "leadership"
+                    ? t("Leadership")
+                    : page_type == "undergraduate_education"
+                    ? t("Undergraduate education")
+                    : page_type == "postgraduate_education"
+                    ? t("Postgraduate education")
+                    : t("Custom")}
+                </Badge>{' - '}
+                <Badge variant="secondary">{row.getValue("page_slug")}</Badge>
+              </div>
+            ) : (
+              <Badge variant="outline">
+                {t("Children")}: {row.original.children?.length || 0}
+              </Badge>
+            )}
+          </>
+        );
+      }
+        
     },
     {
       accessorKey: "position",
