@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { localized } from "@/i18n";
 import BackButton from "@/shared/components/atoms/back-button/BackButton";
 import { MyInput, MySelect } from "@/shared/components/atoms/form-elements";
 import { useData } from "@/shared/hooks/useData";
@@ -7,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { getAllMenus } from "../api/menu";
 import { useMenuForm } from "../hooks/useMenuForm";
-import { localized } from "@/i18n";
 
 interface FormProps {
   mode: "create" | "update";
@@ -122,14 +122,52 @@ const MenuForm = ({
           />
 
           {/* Has Page */}
-          {/* <MyCheckbox control={control} name="has_page" label={t("Has page")} /> */}
           {watch("has_page") && (
-            <MyInput
-              control={control}
-              name="page_slug"
-              label={t("Page slug")}
-              required
-            />
+            <>
+              <MySelect
+                control={control}
+                name="page_type"
+                label={t("Page type")}
+                placeholder={t("Select type")}
+                options={[
+                  {
+                    label: t("Custom"),
+                    value: "page",
+                  },
+                  {
+                    label: t("Department"),
+                    value: "department",
+                  },
+                  {
+                    label: t("Faculty"),
+                    value: "faculty",
+                  },
+                  {
+                    label: t("Laboratory"),
+                    value: "lab",
+                  },
+                  {
+                    label: t("Leadership"),
+                    value: "leadership",
+                  },
+                  {
+                    label: t("Scientific directions"),
+                    value: "scientific_direction",
+                  },
+                  {
+                    label: t("Postgraduate educations"),
+                    value: "postgraduate_education",
+                  },
+                ]}
+                required
+              />
+              <MyInput
+                control={control}
+                name="page_slug"
+                label={t("Page slug")}
+                required
+              />
+            </>
           )}
 
           {/* Type + Status */}
