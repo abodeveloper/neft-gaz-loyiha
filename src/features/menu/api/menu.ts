@@ -49,7 +49,7 @@ const sanitizeSlug = (slug?: string, fallback?: string) => {
 };
 
 export const createMenu = async (data: MenuDto) => {
-  const slug = sanitizeSlug(data.page_slug, data.title_uz);
+  const slug = sanitizeSlug(data?.page_slug, data.title_uz);
 
   const payload = {
     parent: data.parent,
@@ -58,6 +58,7 @@ export const createMenu = async (data: MenuDto) => {
     title_en: data.title_en || undefined,
     has_page: data.has_page,
     page_slug: data.has_page ? slug : null,
+    page_type: data.has_page ? data.page_type : null,
     position: data.position || undefined,
     status: data.status,
   };

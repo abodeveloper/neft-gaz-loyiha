@@ -36,6 +36,7 @@ export const useMenuForm = ({
       title_ru: get(initialData, "title_ru", ""),
       title_en: get(initialData, "title_en", ""),
       has_page: get(initialData, "has_page", true),
+      page_type: get(initialData, "page_type", ""),
       page_slug: get(initialData, "page_slug", ""),
       position: get(initialData, "position"),
       status: get(initialData, "status", true),
