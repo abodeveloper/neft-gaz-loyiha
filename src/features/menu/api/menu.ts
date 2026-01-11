@@ -79,6 +79,7 @@ export const updateMenu = async (id: number, data: Partial<MenuDto>) => {
     title_en: data.title_en,
     has_page: data.has_page,
     page_slug: data.has_page ? slug : null,
+    page_type: data.has_page ? data.page_type : null,
     position: data.position,
     status: data.status,
   };
