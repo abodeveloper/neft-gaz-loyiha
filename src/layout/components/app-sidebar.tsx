@@ -16,6 +16,7 @@ import {
   RiNewspaperLine,
   RiOrganizationChart,
   RiPagesLine,
+  RiTeamLine,
   RiUserCommunityLine
 } from "@remixicon/react";
 import { IconHelp } from "@tabler/icons-react";
@@ -67,6 +68,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t("Carousels"),
         url: "/dashboard/carousels",
         icon: RiCarouselView,
+      },
+      {
+        title: t("Partners"),
+        url: "/dashboard/partners",
+        icon: RiTeamLine,
       },
       {
         title: t("Laboratories"),

@@ -9,19 +9,19 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { deleteEmployee } from "../api/employees";
-import { Employee } from "../types";
+import { deletePartner } from "../api/partners";
+import { Partner } from "../types";
 
-export function useEmployeeColumns(): ColumnDef<Employee>[] {
+export function usePartnerColumns(): ColumnDef<Partner>[] {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   // Delete mutation
   const { mutate: deleteItemMutation, isPending: isDeleting } = useMutation({
-    mutationFn: deleteEmployee,
+    mutationFn: deletePartner,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["employees"] });
+      queryClient.invalidateQueries({ queryKey: ["partners"] });
       toastService.success(t("Succesfully deleted !"));
     },
     onError: (error) => {
@@ -35,38 +35,19 @@ export function useEmployeeColumns(): ColumnDef<Employee>[] {
 
   return [
     {
-      id: "full_name",
-      header: t("Full Name"),
+      id: "title",
+      header: t("Title"),
       cell: ({ row }) => {
-        const employee = row.original;
-        const full_name = localized(employee, "full_name");
+        const item = row.original;
+        const title = localized(item, "title");
 
         return (
           <div
             className="max-w-md truncate font-medium"
-            title={full_name || undefined}
+            title={title || undefined}
           >
-            {full_name || (
-              <span className="text-muted-foreground">{t("No full name")}</span>
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      id: "position",
-      header: t("Position"),
-      cell: ({ row }) => {
-        const employee = row.original;
-        const position = localized(employee, "position");
-
-        return (
-          <div
-            className="max-w-md truncate font-medium"
-            title={position || undefined}
-          >
-            {position || (
-              <span className="text-muted-foreground">{t("No position")}</span>
+            {title || (
+              <span className="text-muted-foreground">{t("No title")}</span>
             )}
           </div>
         );
@@ -82,29 +63,26 @@ export function useEmployeeColumns(): ColumnDef<Employee>[] {
       },
     },
     {
-      accessorKey: "phone",
-      header: t("Phone"),
+      accessorKey: "link",
+      header: t("Link"),
       cell: ({ row }) => (
-        <div>
-          <Badge variant="secondary">{row.getValue("phone")}</Badge>
-        </div>
+        <a
+          href={row.getValue("link")}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="cursor-pointer"
+        >
+          <Badge variant="secondary">{row.getValue("link")}</Badge>
+        </a>
       ),
     },
+
     {
-      accessorKey: "email",
-      header: t("Email"),
-      cell: ({ row }) => (
-        <div>
-          <Badge variant="outline">{row.getValue("email")}</Badge>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "order",
+      accessorKey: "position",
       header: t("Order"),
       cell: ({ row }) => (
         <div>
-          <Badge variant="default">{row.getValue("order")}</Badge>
+          <Badge variant="default">{row.getValue("position")}</Badge>
         </div>
       ),
     },

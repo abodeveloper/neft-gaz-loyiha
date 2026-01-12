@@ -106,6 +106,19 @@ const UpdateCompanyPage = lazy(
 );
 
 
+const PartnersPage = lazy(
+  () => import("@/features/partners/PartnersPage")
+);
+const CreatePartnerPage = lazy(
+  () =>
+    import("@/features/partners/CreatePartnerPage")
+);
+const UpdatePartnerPage = lazy(
+  () =>
+    import("@/features/partners/UpdatePartnerPage")
+);
+
+
 export const routes = [
   {
     path: "/login",
@@ -165,6 +178,14 @@ export const routes = [
             path: "view/:id/files/update/:itemId",
             element: <UpdatePageFilePage />,
           },
+        ],
+      },
+      {
+        path: "partners",
+        children: [
+          { index: true, element: <PartnersPage /> },
+          { path: "create", element: <CreatePartnerPage /> },
+          { path: "update/:id", element: <UpdatePartnerPage /> },
         ],
       },
       {
