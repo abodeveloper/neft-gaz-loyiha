@@ -158,6 +158,10 @@ const MenuForm = ({
                     label: t("Postgraduate educations"),
                     value: "postgraduate_education",
                   },
+                  {
+                    label: t("News"),
+                    value: "news",
+                  },
                 ]}
                 required
               />

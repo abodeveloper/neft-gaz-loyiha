@@ -80,19 +80,21 @@ export function useMenuColumns(
               <div className="flex gap-2">
                 <Badge variant="outline">
                   {page_type == "lab"
-                    ? t("Laboratory")
+                    ? t("Laboratories")
                     : page_type == "department"
-                    ? t("Department")
+                    ? t("Departments")
                     : page_type == "faculty"
                     ? t("Faculty")
                     : page_type == "leadership"
                     ? t("Leadership")
-                    : page_type == "undergraduate_education"
-                    ? t("Undergraduate education")
+                    : page_type == "scientific_direction"
+                    ? t("Scientific directions")
                     : page_type == "postgraduate_education"
-                    ? t("Postgraduate education")
+                    ? t("Postgraduate educations")
+                    : page_type == "news"
+                    ? t("News")
                     : t("Custom")}
-                </Badge>{' - '}
+                                  </Badge>{' - '}
                 <Badge variant="secondary">{row.getValue("page_slug")}</Badge>
               </div>
             ) : (
