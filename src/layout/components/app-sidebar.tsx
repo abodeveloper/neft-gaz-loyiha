@@ -148,7 +148,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <div className="px-1 flex items-center gap-2">
               <img src={Logo} alt="" width={50} />
-              <span className="text-base font-semibold">NGGI</span>
+              <span className="ml-1 text-base font-semibold">NGGI</span>
             </div>
           </SidebarMenuItem>
         </SidebarMenu>
