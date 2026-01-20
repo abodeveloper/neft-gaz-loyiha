@@ -12,8 +12,8 @@ const DynamicIcon = ({ name, className, size, color }: DynamicIconProps) => {
   // "file-cog" -> "FileCog"
   // "user" -> "User"
   const pascalCaseName = name
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    ?.split("-")
+    ?.map((word) => word?.charAt(0)?.toUpperCase() + word?.slice(1))
     .join("");
 
   // 2. Ikonkani 'icons' obyektidan qidirish
