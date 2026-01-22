@@ -74,7 +74,6 @@ const CarouselForm = ({ mode, id, initialData }: FormProps) => {
             label={t("Description (uz)")}
             placeholder={t("Enter a description in Uzbek...")}
             rows={5}
-            required
           />
 
           <MyTextarea
@@ -83,7 +82,6 @@ const CarouselForm = ({ mode, id, initialData }: FormProps) => {
             label={t("Description (ru)")}
             placeholder={t("Enter a description in Russian...")}
             rows={5}
-            required
           />
 
           <MyTextarea
@@ -92,7 +90,6 @@ const CarouselForm = ({ mode, id, initialData }: FormProps) => {
             label={t("Description (en)")}
             placeholder={t("Enter a description in English...")}
             rows={5}
-            required
           />
 
           <MyInput

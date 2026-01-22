@@ -20,15 +20,15 @@ export const createCarouselSchema = (t: (key: string) => string) =>
 
     description_uz: z
       .string()
-      .min(1, { message: t("Required field") })
+      // .min(1, { message: t("Required field") })
       .max(1000, { message: t("Description must be at most 1000 characters") }),
     description_ru: z
       .string()
-      .min(1, { message: t("Required field") })
+      // .min(1, { message: t("Required field") })
       .max(1000, { message: t("Description must be at most 1000 characters") }),
     description_en: z
       .string()
-      .min(1, { message: t("Required field") })
+      // .min(1, { message: t("Required field") })
       .max(1000, { message: t("Description must be at most 1000 characters") }),
 
     link: z
