@@ -4,6 +4,7 @@ import { getAllMenuPages } from "@/features/menu-pages/api/menu-page";
 import { localized } from "@/i18n";
 import BackButton from "@/shared/components/atoms/back-button/BackButton";
 import {
+  MyDateTimePicker,
   MyEditor,
   MyFileInput,
   MyInput,
@@ -78,7 +79,7 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
             disabled={mutation.isPending}
             required
           />
-          
+
           <MyEditor
             control={control}
             name="description_uz"
@@ -143,6 +144,13 @@ const NewsForm = ({ mode, id, initialData }: NewsFormProps) => {
               required
             />
           </div>
+
+          <MyDateTimePicker
+            control={control}
+            name="published_date"
+            label={t("Published Date")}
+            required
+          />
 
           <MyFileInput
             control={control}

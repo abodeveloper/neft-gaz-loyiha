@@ -4,9 +4,10 @@ import { localized } from "@/i18n";
 import { toastService } from "@/lib/toastService";
 import ConfirmationDialog from "@/shared/components/atoms/confirmation-dialog/ConfirmationDialog";
 import ImageGallery from "@/shared/components/atoms/image-gallery/ImageGallery";
-import { RiDeleteBinLine, RiEditLine, RiEyeLine } from "@remixicon/react"; // Remix Icon
+import { RiDeleteBinLine, RiEditLine } from "@remixicon/react"; // Remix Icon
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { deleteNews } from "../api/news";
@@ -43,10 +44,7 @@ export function useNewColumns(): ColumnDef<News>[] {
         const title = localized(news, "title");
 
         return (
-          <div
-            className="font-medium"
-            title={title || undefined}
-          >
+          <div className="font-medium" title={title || undefined}>
             {title || (
               <span className="text-muted-foreground">{t("No title")}</span>
             )}
@@ -74,6 +72,27 @@ export function useNewColumns(): ColumnDef<News>[] {
           </Badge>
         </div>
       ),
+    },
+    {
+      accessorKey: "published_date",
+      header: t("Published Date"),
+      cell: ({ row }) => {
+        const dateStr = row.getValue("published_date") as string;
+
+        if (!dateStr) return <div className="text-muted-foreground">-</div>;
+
+        try {
+          // Kelgan stringni Date obyektiga o'girib, formatlaymiz
+          const date = new Date(dateStr);
+          const formattedDate = format(date, "dd.MM.yyyy HH:mm");
+
+          return (
+            <div className="font-medium whitespace-nowrap">{formattedDate}</div>
+          );
+        } catch (error) {
+          return <div className="text-destructive">Invalid date</div>;
+        }
+      },
     },
     {
       accessorKey: "status",

@@ -42,6 +42,7 @@ export const createNew = async (data: NewDto) => {
   if (data.description_uz) formData.append("description_uz", data.description_uz);
   if (data.description_ru) formData.append("description_ru", data.description_ru);
   if (data.description_en) formData.append("description_en", data.description_en);
+  if (data.published_date) formData.append("published_date", data.published_date.toISOString());
   formData.append("type", data.type);
   formData.append("status", data.status.toString());
 
@@ -74,38 +75,43 @@ export const createNew = async (data: NewDto) => {
 export const updateNew = async (id: number, data: Partial<NewDto>) => {
   const formData = new FormData();
 
-  // 1. Oddiy matnli maydonlarni avtomatik qo'shish (qayta-qayta if yozmaslik uchun)
+  // 1. Oddiy matnli maydonlar
   const textFields = [
     "title_uz", "title_ru", "title_en",
-    "description_uz", "description_ru", "description_en",
-    "type"
+    "description_uz", "description_ru", "description_en", "type"
   ] as const;
 
   textFields.forEach((field) => {
     if (data[field]) formData.append(field, data[field] as string);
   });
 
-  // 2. Status (boolean yoki 0 bo'lishi mumkinligi uchun alohida tekshiramiz)
+  // 2. Published Date (Update uchun maxsus)
+  if (data.published_date) {
+    const dateStr = typeof data.published_date === "string"
+      ? data.published_date
+      : (data.published_date as Date).toISOString();
+    formData.append("published_date", dateStr);
+  }
+
+  // 3. Status
   if (data.status !== undefined) {
     formData.append("status", data.status.toString());
   }
 
-  // 3. PAGES - Arrayni to'g'ri yuborish (Sizdagi asosiy muammo shu edi)
+  // 4. PAGES
   if (data.pages && data.pages.length > 0) {
     data.pages.forEach((pageId) => {
-      // Har bir ID ni alohida append qilamiz
       formData.append("pages", pageId.toString());
     });
   }
 
-  // 4. RASMLAR LOGIKASI
+  // 5. RASMLAR LOGIKASI
   if (Array.isArray(data.images)) {
     data.images.forEach((item: any) => {
       if (item instanceof File) {
-        // Yangi yuklanayotgan fayllar
         formData.append("upload_images", item);
-      } else if (item.id) {
-        // Eski saqlanib qolgan rasmlarning IDsi
+      } else if (item && typeof item === "object" && item.id) {
+        // Eski saqlanib qolgan rasm IDsi
         formData.append("exists_image_ids", item.id.toString());
       }
     });

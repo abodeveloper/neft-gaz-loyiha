@@ -50,6 +50,18 @@ export const createNewSchema = (t: (key: string) => string) =>
     // STATUS
     status: z.boolean().default(true),
 
+    // PUBLISHED DATE
+    published_date: z
+      .preprocess(
+        (val) => (typeof val === "string" || val instanceof Date ? new Date(val) : val),
+        z.date({
+          message: t("Required field"),
+        })
+      )
+      .refine((date) => date !== undefined && !isNaN(date.getTime()), {
+        message: t("Invalid date format"),
+      }),
+
     // ARRAY OF IMAGES
     images: z
       .array(
